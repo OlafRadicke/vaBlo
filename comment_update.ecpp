@@ -1,0 +1,102 @@
+<%doc>
+  Copyright (C) 2011 by Julian Wiesener
+  
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+  
+  As a special exception, you may use this file as part of a free
+  software library without restriction. Specifically, if other files
+  instantiate templates or use macros or inline functions from this
+  file, or you compile this file and link it with other files to
+  produce an executable, this file does not by itself cause the
+  resulting executable to be covered by the GNU General Public
+  License. This exception does not however invalidate any other
+  reasons why the executable file might be covered by the GNU Library
+  General Public License.
+  
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+</%doc>
+<%pre>
+  #include <tnt/savepoint.h>
+
+  #include <vagra/article/cachedarticle.h>
+  #include <vagra/comment/comment.h>
+  #include <vagra/helpers.h>
+</%pre>
+<%cpp>
+  std::string title("Edit Comment");
+  bool ready = false;
+</%cpp>
+<%args>
+  std::string i_name;
+  std::string i_mail;
+  std::string i_home;
+  std::string i_text;
+  unsigned int i_art_id = 0;
+  unsigned int i_ref_id = 0;
+  unsigned int i_comm_id = 0;
+</%args>
+<%session scope="global">
+  vagra::Comment comment;
+</%session>
+<%include>
+  inc/auth.ecpp
+  inc/header.ecpp
+</%include>
+<%cpp>
+try {
+  tnt::Savepoint sp(reply);
+
+  if(!comment) {
+	comment = vagra::Comment (vagra::str2unsigned(request.getPathInfo()));
+  } else if(comment.getId() == i_comm_id) {
+    comment.setAuthor(i_name);
+    comment.setMail(i_mail);
+    comment.setHomepage(i_home);
+    comment.setText(i_text);
+    comment.setRef(i_ref_id);
+    ready = true;
+  }
+  vagra::CachedArticle article(comment.getArticle());
+  i_name = comment.getAuthor();
+  i_mail = comment.getMail();
+  i_home = comment.getHomepage();
+  i_text = comment.getText();
+  i_art_id = comment.getArticle();
+  i_ref_id = comment.getRef();
+  i_comm_id = comment.getId();
+</%cpp>
+<%include>
+  inc/article_admin.ecpp
+</%include>
+  <h4>Edit comment</h4>
+<%include>
+  inc/comment.ecpp
+</%include>
+% if(ready) {
+    <form action="/admin/comment/commit" method="get">
+      <div class="submit"><input type="submit" value="Commit" /></div>
+    </form>
+% }
+<%include>
+  inc/comment_form.ecpp
+</%include>
+<%cpp>
+  sp.commit();
+}
+catch(const std::exception& er_comm) {
+  reply.out() << er_comm.what() << std::endl;
+}
+</%cpp>
+<%include>
+  inc/footer.ecpp
+</%include>

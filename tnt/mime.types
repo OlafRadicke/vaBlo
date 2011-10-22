@@ -1,0 +1,22 @@
+text/plain	.txt
+text/html	.html .htm .xhtml
+image/png	.png
+image/gif	.gif
+image/bmp	.bmp
+application/x-tar	.tgz
+image/jpeg	.jpeg .jpg
+image/tif  .tif .tiff
+image/ico       .ico
+text/css	.css
+text/plain	.asc
+text/rtf	.rtf
+video/mpeg	.mpeg .mpg .mpe
+application/x-javascript	.js
+application/msword	.doc .dot
+application/pdf	.pdf
+application/postscript	.ps .ai .eps
+application/vnd.ms-excel	.xls .xlb
+application/vnd.ms-powerpoint	.ppt .pps .pot
+application/zip	.zip
+application/x-gtar	.gtar .tgz .taz
+application/x-java-archive	.jar

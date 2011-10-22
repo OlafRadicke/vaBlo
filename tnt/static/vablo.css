@@ -1,0 +1,256 @@
+@charset "utf-8";
+
+body {
+	font-size: 0.8em;
+	line-height: 1.35em;
+	font-family: "Verdana", "Arial", sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #faf6e8;
+}
+
+a {
+	text-decoration: underline;
+	color: #594f4f;
+}
+
+a:active, a:hover, a:focus {
+	color: #846c6c;
+}
+
+a:active, a:focus {
+	outline-width: 0.1em;
+	outline-style: dotted;
+}
+
+a:visited {
+	color: #7f6b6b;
+}
+
+#background {
+	background-color: #ddd2d2;
+	margin: 2em;
+}
+
+#head {
+	background-color: #990521;
+	position: relative;
+	z-index: 30;
+}
+
+#head h1 {
+	display: block;
+	font-family: "VT-100", "Terminal", "Courier", monospace;
+	font-weight: bold;
+        font-size: 3em;
+	line-height: 3em;
+	text-align: left;
+	margin: 0;
+}
+
+#head a {
+	display: block;
+	color: #fffef1;
+	text-decoration: none;
+	padding-left: 3em;
+}
+
+#tags {
+	position: relative;
+	font-size: 1em;
+	line-height: 2em;
+	float: right;
+	width: 10em;
+	border-top-width: 0.2em;
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-style: solid;
+	border-color: #2d2626;
+}
+
+dl.tags a {
+	position: relative;
+	display: block;
+	height: 2em;
+	text-decoration: none;
+	text-align: left;
+	outline-style: none;
+}
+
+#content {
+	margin-top: 0;
+	margin-right: 10em;
+	position: relative;
+	background-color: #f1e4e4;
+	padding-top: 1em;
+	padding-bottom: 5em;
+	padding-right: 2em;
+	padding-left: 2em;
+	min-height: 50em;
+	border-top-width: 0.2em;
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-style: solid;
+	border-color: #2d2626;
+	z-index: 30;
+}
+
+div.article {
+	margin-bottom: 3em;
+}
+
+div.article h2 {
+	border-style: solid;
+	border-top-width: 0;
+	border-bottom-width: 0.1em;
+	border-right-width: 0;
+	border-left-width: 0;
+	border-color: #2d2626;
+	margin-top: 0.1em;
+	margin-bottom: 0.5em;
+}
+
+div.article h2 a {
+	font-size: 1.5em;
+	font-weight: bolder;
+	text-decoration: none;
+}
+
+div.article h3 {
+	border-style: solid;
+	border-top-width: 0;
+	border-bottom-width: 0.1em;
+	border-right-width: 0;
+	border-left-width: 0;
+	border-color: #2d2626;
+	margin-top: 0.1em;
+	margin-bottom: 0.5em;
+}
+
+div.article h3 a {
+	font-size: 1.3em;
+	font-weight: bolder;
+	text-decoration: none;
+}
+
+h4 {
+	font-size: 1.2em;
+	margin-bottom: 0;
+	color: #2d2626;
+}
+div.article img {
+	float: left;
+}
+
+div.article p.abstract {
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #2d2626;
+}
+
+div.article_info {
+	border-top-width: 0.1em;
+	border-bottom-width: 0em;
+	border-right-width: 0;
+	border-left-width: 0;
+	border-style: solid;
+	border-color: #2d2626;
+	margin-top: 1em;
+	margin-bottom: 3em;
+}
+
+div.comment {
+	margin-bottom: 2.5em;
+	margin-top: 1.5em;
+	margin-left: 2em;
+	width: 40em;
+}
+
+div.comment pre {
+	font-family: "Verdana", "Arial", sans-serif;
+	border-top-width: 0.1em;
+	border-bottom-width: 0;
+	border-right-width: 0;
+	border-left-width: 0;
+	border-style: solid;
+	border-color: #2d2626;
+	margin-top: 0;
+	padding-top: 0.5em;
+}
+
+div.comment p.comment_info {
+	margin-top: 0;
+	margin-bottom: 0;
+	float: left;
+}
+
+div.comment p.comment_reply {
+	margin-top: 0;
+	margin-bottom: 0;
+	text-align: right;
+}
+
+fieldset {
+	margin-bottom: 2.5em;
+	margin-top: 2.5em;
+	margin-left: 2em;
+	width: 38.75em;
+	border-top-width: 0.1em;
+	border-bottom-width: 0em;
+	border-right-width: 0;
+	border-left-width: 0;
+	border-style: solid;
+	border-color: #2d2626;
+}
+
+label {
+	display: block;
+	margin-top: 0.8em;
+}
+
+span.desc {
+	color: #846c6c;
+	font-size: 0.8em;
+	margin-left: 0.3em;
+}
+
+textarea {
+	width: 80%;
+	height: 12em;
+}
+
+div.submit input {
+	margin-top: 1em;
+}
+
+p.warn {
+	font-weight: bold;
+	color: #ff0000;
+}
+
+#pager {
+	text-align: center;
+	border-top-width: 0.1em;
+	border-bottom-width: 0em;
+	border-right-width: 0;
+	border-left-width: 0;
+	border-style: solid;
+	border-color: #2d2626;
+	margin-top: 2em;
+}
+
+#footer {
+	position: relative;
+	text-align: center;
+	color: #909090;
+	font-size: 0.75em;
+	z-index: 30;
+	padding: 1em;
+	line-height: 1.1em;
+}
+
+#footer a {
+	color: #707070;
+}
