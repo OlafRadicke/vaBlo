@@ -26,22 +26,55 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef VARGA_ARTICLEPAGE_H
-#define VARGA_ARTICLEPAGE_H
+#ifndef VARGA_CACHEDSEARCH_H
+#define VARGA_CACHEDSEARCH_H
 
-#include <vagra/page.h>
-#include <vagra/article/cachedarticle.h>
+#include <string>
+
+#include <vagra/search.h>
+#include <vagra/resultcache.h>
 
 namespace vagra
 {
 
-class ArtPage: public Page
+template <typename Object, class SearchImpl = Search>
+class CachedSearch : public SearchImpl
 {
+	const std::vector<unsigned int>& cacheSearch()
+	{
+		if(SearchImpl::table.empty())
+			SearchImpl::table = Object().getTable();
+		if(SearchImpl::search_key.empty())
+			SearchImpl::genSearchKey();
+
+		ResultCache<Object>& rc = ResultCache<Object>::getInstance();
+		std::pair<bool, typename ResultCache<Object>::SharedResults> _res(rc.get(SearchImpl::search_key));
+
+		if(_res.first)
+			SearchImpl::results = *(_res.second);
+		else
+		{
+			SearchImpl::dbSearch();
+			rc.put(SearchImpl::search_key, SearchImpl::results);
+		}
+	        return SearchImpl::results;
+	}
+
     public:
-	ArtPage(const std::vector<unsigned int>&, unsigned int, unsigned int = 0);
-	ArtPage(unsigned int, unsigned int = 0);
+	const std::vector<unsigned int>& getResults()
+	{
+		if(SearchImpl::results.empty())
+			cacheSearch();
+		return SearchImpl::results;
+	}
+
+	/* allow manually set search_key if genSearchKey() is not appropriate */
+	void setSearchKey(const std::string& _key)
+	{
+		SearchImpl::search_key = _key;
+	}
 };
 
 } //namespace vagra
 
-#endif // VARGA_ARTICLEPAGE_H
+#endif // VARGA_CACHEDSEARCH_H

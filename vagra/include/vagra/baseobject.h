@@ -26,35 +26,56 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef VARGA_BAASEOBJECT_H
-#define VARGA_BAASEOBJECT_H
+#ifndef VARGA_BASEOBJECT_H
+#define VARGA_BASEOBJECT_H
 
 #include <string>
 #include <vector>
 
 #include <vagra/types.h>
 #include <vagra/date.h>
+#include <vagra/cachedcontext.h>
 
 namespace vagra
 {
 
 class BaseObject
 {
-	virtual void dbInsert() = NULL;
-	virtual void dbUpdate() = NULL;
+	CachedContext ctx;
+	unsigned int oid; //Owner ID
+	unsigned char read_level;//read only
+	unsigned char add_level; //for creation of new objects with default permissions
+	unsigned char write_level; //also allow update objects and modify permissions
+
+	BaseObject() : ctx(0) {} //need tablename
+
+	virtual void dbCommit(const unsigned int = 0) = NULL;
 	virtual void clear() = NULL;
 
     protected:
-	BaseObject() :
-       		id(0) {}
-	unsigned int id;
-	std::string title;
-	std::string head;
-	std::string abstract;
-	std::string text;
-	std::string author;
+	BaseObject(const std::string& _tablename) :
+		ctx(0), oid(0),
+		read_level(126),
+		add_level(126),
+		write_level(126),
+		id(0), tablename(_tablename) {}
+
+	/* call BaseObject("tablename", objId, authId), from derived initializer
+	 * if authId is obmitted anonymous user 0 will be used
+	 */
+	BaseObject(const std::string&, const unsigned int, const unsigned int = 0);
+
+	unsigned int id; //Object ID
+	std::string tablename; //Database tablename
+
 	vdate ctime;
 	vdate mtime;
+
+	/* call dbCommitBase(conn) in the same transaction as the
+	 * derived dbCommit, thus there won't be any baseobject
+	 * entries in the database if derived dbCommit throws
+	 */
+	void dbCommitBase(dbconn&, const unsigned int = 0);
 	void clearBase();
 
     public:
@@ -62,22 +83,31 @@ class BaseObject
 	virtual BaseObject* operator->() = NULL;
 	virtual ~BaseObject() {}
 
+	const CachedContext& getContext() const;
 	const unsigned int getId() const;
-	const std::string& getTitle() const;
-	const std::string& getHead() const;
-	const std::string& getAbstract() const;
-	const std::string& getText() const;
-	const std::string& getAuthor() const;
+	const unsigned int getOwner() const;
+	const unsigned char getReadLevel() const;
+	const unsigned char getAddLevel() const;
+	const unsigned char getWriteLevel() const;
+	const std::string& getTable() const; //used by Search.setType()
+	const unsigned char getAuthLevel(const unsigned int = 0) const;
+
 	const vdate& getCTime() const;
 	const vdate& getMTime() const;
 
-	void setTitle(const std::string&);
-	void setHead(const std::string&);
-	void setAbstract(const std::string&);
-	void setText(const std::string&);
-	void setAuthor(const std::string&);
+	/* setContext always set all permissons to the Context defaults
+	 * and also sets the owner to AuthId. Remember that dbCommit might
+	 * become impossible if you set the owner != AuthId */
+	void setContext(const CachedContext&, const unsigned int = 0);
+	void setContext(const std::string&, const unsigned int = 0);
+	void setContext(const unsigned int, const unsigned int = 0);
+
+	void setOwner(const unsigned int, const unsigned int = 0);
+	void setReadLevel(const unsigned char, const unsigned int = 0);
+	void setAddLevel(const unsigned char, const unsigned int = 0);
+	void setWriteLevel(const unsigned char, const unsigned int = 0);
 };
 
 } //namespace vagra
 
-#endif // VAGRA_VARGA_BAASEOBJECT_H
+#endif // VAGRA_VARGA_BASEOBJECT_H

@@ -26,22 +26,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef VARGA_ARTICLEPAGE_H
-#define VARGA_ARTICLEPAGE_H
+#ifndef VARGA_AUTH_H
+#define VARGA_AUTH_H
 
-#include <vagra/page.h>
-#include <vagra/article/cachedarticle.h>
+#include <string>
 
 namespace vagra
 {
 
-class ArtPage: public Page
+class BaseObject;
+
+class Auth
 {
+	unsigned int uid;
+
     public:
-	ArtPage(const std::vector<unsigned int>&, unsigned int, unsigned int = 0);
-	ArtPage(unsigned int, unsigned int = 0);
+	Auth() :
+       		uid(0) {};
+	Auth(const unsigned int, const std::string&);
+
+	operator unsigned int() const { return uid; }
 };
 
 } //namespace vagra
 
-#endif // VARGA_ARTICLEPAGE_H
+#endif // VARGA_AUTH_H

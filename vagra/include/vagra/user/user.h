@@ -26,22 +26,56 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef VARGA_ARTICLEPAGE_H
-#define VARGA_ARTICLEPAGE_H
+#ifndef VARGA_USER_H
+#define VARGA_USER_H
 
-#include <vagra/page.h>
-#include <vagra/article/cachedarticle.h>
+#include <string>
+
+#include <vagra/types.h>
+#include <vagra/baseobject.h>
 
 namespace vagra
 {
 
-class ArtPage: public Page
+class User: public BaseObject
 {
+	std::string logname;
+	std::string dispname;
+	std::string surname;
+	std::string name;
+	std::string mail;
+
     public:
-	ArtPage(const std::vector<unsigned int>&, unsigned int, unsigned int = 0);
-	ArtPage(unsigned int, unsigned int = 0);
+	User() : BaseObject("vuser") {}
+	explicit User(const unsigned int, const unsigned int = 0);
+	operator bool() const;
+	operator int() const;
+	operator unsigned int() const;
+	User* operator->() { return this; }
+	void clear();
+
+	unsigned int getId() const;
+	const std::string& getLogname() const;
+	const std::string& getDispname() const;
+	const std::string& getSurname() const;
+	const std::string& getName() const;
+	const std::string& getMail() const;
+
+	void setLogname(const std::string&);
+	void setDispname(const std::string&);
+	void setSurname(const std::string&);
+	void setName(const std::string&);
+	void setMail(const std::string&);
+
+	void dbCommit(const unsigned int = 0);
 };
+
+unsigned int getUidByLogname(const std::string&);
+unsigned int getUidByLogname(const std::string&, dbconn&);
+
+unsigned int getUidByDispname(const std::string&);
+unsigned int getUidByDispname(const std::string&, dbconn&);
 
 } //namespace vagra
 
-#endif // VARGA_ARTICLEPAGE_H
+#endif // VARGA_USER_H

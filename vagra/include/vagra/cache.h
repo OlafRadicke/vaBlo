@@ -35,9 +35,10 @@ namespace vagra
 {
 
 /* Cache for vagra objects.
- *  - Objects need a constructor that takes one unsigned int as parameter
+ *  - Objects need a constructor that takes two unsigned int as parameter
+ *  - First parameter is the ObjectId, second referes to an AuthId
  *  - Objects need a valid bool() operator
- *  - If 0 is given as costructor parameter, it shall generate an special object,
+ *  - If 0 is given as first costructor parameter, it shall generate an special object,
  *    that acts as replacement for Object that's bool operator return false
  */
 

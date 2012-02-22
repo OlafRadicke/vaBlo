@@ -26,22 +26,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef VARGA_ARTICLEPAGE_H
-#define VARGA_ARTICLEPAGE_H
+#ifndef VARGA_CONTEXTCACHE_H
+#define VARGA_CONTEXTCACHE_H
 
-#include <vagra/page.h>
-#include <vagra/article/cachedarticle.h>
+#include <map>
+
+#include <cxxtools/mutex.h>
+
+#include <vagra/types.h>
+#include <vagra/basecache.h>
+
+#include <vagra/context.h>
 
 namespace vagra
 {
 
-class ArtPage: public Page
+class ContextCache: public BaseCache<Context>
 {
+	ContextCache() {}
+
+        std::map<std::string, unsigned int> id_map;
+        cxxtools::ReadWriteMutex id_map_mutex;
+
     public:
-	ArtPage(const std::vector<unsigned int>&, unsigned int, unsigned int = 0);
-	ArtPage(unsigned int, unsigned int = 0);
+        static ContextCache& getInstance();
+        unsigned int getIdByName(const std::string&);
 };
+
+typedef ContextCache::SharedObject SharedContext;
+
+unsigned int cachedGetContextIdByName(const std::string&);
 
 } //namespace vagra
 
-#endif // VARGA_ARTICLEPAGE_H
+#endif // VARGA_CONTEXTCACHE_H

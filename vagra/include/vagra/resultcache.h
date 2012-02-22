@@ -26,20 +26,81 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef VARGA_RESULTCACHE_H
+#define VARGA_RESULTCACHE_H
+
+#include <string>
+#include <vector>
+
+#include <cxxtools/cache.h>
+#include <cxxtools/noncopyable.h>
+#include <cxxtools/smartptr.h>
+#include <cxxtools/mutex.h>
+#include <cxxtools/membar.h>
+
 #include <vagra/nexus.h>
-#include <vagra/comment/commentpage.h>
 
 namespace vagra
 {
 
-CommentPage::CommentPage (const std::vector<unsigned int>& cont_ids, unsigned int arg_page, unsigned int arg_amount)
+template <typename Object>
+class ResultCache : private cxxtools::NonCopyable
 {
-	if(arg_amount == 0)
+    public:
+	typedef cxxtools::SmartPtr<const std::vector<unsigned int>, 
+		cxxtools::ExternalAtomicRefCounted> SharedResults;
+
+	static ResultCache& getInstance()
+	{
+		static ResultCache* volatile instance = NULL;
+		static cxxtools::Mutex inst_mutex;
+
+		cxxtools::membar_read();
+		if(!instance)
+		{
+			cxxtools::MutexLock lock(inst_mutex);
+			cxxtools::membar_read();
+			if(!instance)
+			{
+				ResultCache* _tmp = new ResultCache();
+				cxxtools::membar_write();
+				instance = _tmp;
+			}
+		}
+		return *instance;
+	}
+
+	std::pair<bool, SharedResults> get(const std::string& _key)
+	{
+		cxxtools::MutexLock lock(mutex);
+		return cache_inst.getx(_key);
+	}
+
+	void put(const std::string& _key, const std::vector<unsigned int>& _res)
+	{
+		cxxtools::MutexLock lock(mutex);
+		cache_inst.put(_key, SharedResults(new std::vector<unsigned int>(_res)));
+	}
+
+	void clear()
+	{
+		cache_inst.clear();
+	}
+
+    private:
+	cxxtools::Cache<std::string, SharedResults> cache_inst;
+	cxxtools::Mutex mutex;
+
+	ResultCache ()
+		: cache_inst(this->getCacheSize()) {}
+
+	unsigned int getCacheSize()
 	{
 		Nexus& nx = Nexus::getInstance();
-		arg_amount = nx.getConfig("comment_page_size", nx.getPageSize());
+		return nx.getCacheSize();
 	}
-	Init(cont_ids, arg_page, arg_amount);
-}
+};
 
 } //namespace vagra
+
+#endif // VARGA_RESULTCACHE_H

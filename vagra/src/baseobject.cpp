@@ -26,28 +26,122 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <libintl.h>
+#include <stdexcept>
+
+#include <cxxtools/log.h>
+#include <cxxtools/loginit.h>
+#include <tntdb/row.h>
+
+#include <vagra/nexus.h>
 #include <vagra/baseobject.h>
 
 namespace vagra
 {
 
+log_define("vagra")
+
 //begin BaseObject
+
+BaseObject::BaseObject(const std::string& _tablename, const unsigned int _id, const unsigned int _aid)
+	: ctx(0), oid(0), read_level(126), add_level(126), write_level(126), id(_id), tablename(_tablename)
+{
+        try
+	{
+                Nexus& nx = Nexus::getInstance();
+                dbconn conn = nx.dbConnection();
+
+		tntdb::Statement q_obj = conn.prepare(
+                        "SELECT oid, cid, read_level, add_level, write_level, ctime, mtime"
+                                " FROM " + tablename + " WHERE id = :Qid");
+                q_obj.setUnsigned("Qid", id);
+                tntdb::Row row_obj = q_obj.selectRow();
+                if(row_obj.empty())
+                        throw std::domain_error(gettext("couldn't read object form db"));
+                if(!row_obj[0].isNull())
+                        oid = row_obj[0].getUnsigned();
+                if(!row_obj[1].isNull())
+                        ctx = CachedContext(row_obj[1].getUnsigned());
+                if(!row_obj[2].isNull())
+                        read_level = row_obj[2].getUnsigned();
+                if(!row_obj[3].isNull())
+                        add_level = row_obj[3].getUnsigned();	
+                if(!row_obj[4].isNull())
+                        write_level = row_obj[4].getUnsigned();	
+		if(!row_obj[5].isNull())
+			ctime = row_obj[5].getDatetime();
+		if(!row_obj[6].isNull())
+			mtime = row_obj[6].getDatetime();
+        }
+        catch(const std::exception& er_obj)
+        {
+                log_error(er_obj.what());
+                throw std::domain_error(gettext("could not init BaseObject"));
+        }
+	if(getAuthLevel(_aid) < read_level)
+		throw std::domain_error(gettext("insufficient privileges"));
+}
 
 BaseObject::operator bool() const
 {
-	return(!title.empty() && !head.empty() && (!text.empty() || !abstract.empty()));
+	return id;
+}
+
+void BaseObject::dbCommitBase(dbconn& conn, const unsigned int _aid)
+{
+	if(id) // id!=null, update. otherwise insert
+	{
+		if(getAuthLevel(_aid) < write_level)
+			throw std::domain_error(gettext("insufficient privileges"));
+
+		conn.prepare("UPDATE " + tablename + " SET oid = :Ioid, cid = :Icid,"
+                	" read_level = :Iread_level, add_level = :Iadd_level,"
+		        " write_level = :Iwrite_level, mtime = now() WHERE id = :Iid")
+		.setUnsigned("Ioid", oid)
+		.setUnsigned("Icid", ctx->getId())
+		.setUnsigned("Iread_level", read_level)
+		.setUnsigned("Iadd_level", add_level)
+		.setUnsigned("Iwrite_level", write_level)
+		.setUnsigned("Iid", id)
+		.execute();
+	}
+	else
+	{
+		//if authId doesn't reach write_level, adding new objects might still be desired
+		if(getAuthLevel(_aid) < write_level && getAuthLevel(_aid) < add_level)
+			throw std::domain_error(gettext("insufficient privileges"));
+
+		tntdb::Statement ins_obj = conn.prepare("INSERT INTO "
+			+ tablename + " (oid, cid, read_level, add_level, write_level)"
+                	" VALUES (:Ioid, :Icid, :Iread_level, :Iadd_level, :Iwrite_level)"
+		        " RETURNING id");		// get id from fresh created obj
+		ins_obj.setUnsigned("Ioid", oid);
+		ins_obj.setUnsigned("Icid", ctx->getId());
+		ins_obj.setUnsigned("Iread_level", read_level);
+		ins_obj.setUnsigned("Iadd_level", add_level);
+		ins_obj.setUnsigned("Iwrite_level", write_level);
+		tntdb::Row row_obj = ins_obj.selectRow();
+		if(row_obj[0].isNull())
+                        throw std::domain_error(gettext("insert didn't retuned an id"));
+                id = row_obj[0].getUnsigned();
+	}
 }
 
 void BaseObject::clearBase()
 {
 	id = 0;
-	title.clear();
-	head.clear();
-	abstract.clear();
-	text.clear();
-	author.clear();
+	oid = 0;
+	ctx = CachedContext(0);
+	read_level = 126;
+	add_level = 126;
+	write_level = 126;
 	ctime = vdate();
 	mtime = vdate();
+}
+
+const CachedContext& BaseObject::getContext() const
+{
+	return ctx;
 }
 
 const unsigned int BaseObject::getId() const
@@ -55,29 +149,24 @@ const unsigned int BaseObject::getId() const
 	return id;
 }
 
-const std::string& BaseObject::getTitle() const
+const unsigned int BaseObject::getOwner() const
 {
-	return title;
+	return oid;
 }
 
-const std::string& BaseObject::getHead() const
+const unsigned char BaseObject::getReadLevel() const
 {
-	return head;
+	return read_level;
 }
 
-const std::string& BaseObject::getAbstract() const
+const unsigned char BaseObject::getAddLevel() const
 {
-	return abstract;
+	return add_level;
 }
 
-const std::string& BaseObject::getText() const
+const unsigned char BaseObject::getWriteLevel() const
 {
-	return text;
-}
-
-const std::string& BaseObject::getAuthor() const
-{
-	return author;
+	return write_level;
 }
 
 const vdate& BaseObject::getCTime() const
@@ -90,29 +179,103 @@ const vdate& BaseObject::getMTime() const
 	return mtime;
 }
 
-void BaseObject::setTitle(const std::string& s)
+const std::string& BaseObject::getTable() const
 {
-	title = s;
+	return tablename;
 }
 
-void BaseObject::setHead(const std::string& s)
+const unsigned char BaseObject::getAuthLevel(const unsigned int _aid) const
 {
-	head = s;
+        unsigned char _auth_level(2);
+
+        if(_aid) {
+                _auth_level += 6;
+                if(_aid == oid)
+                        _auth_level += 30;
+                if(_aid == 1) //assume 1 as admin //FIXME
+                        _auth_level += 126;
+		_auth_level += ctx->getAuthLevel(_aid);
+        }
+        return _auth_level;
 }
 
-void BaseObject::setAbstract(const std::string& s)
+void BaseObject::setContext(const CachedContext& _ctx, const unsigned int _aid)
 {
-	abstract = s;
+	if(!id) //new object if false
+	{
+		if(_ctx->getAuthLevel(_aid) < _ctx->getAddLevel()
+			&& _ctx->getAddLevel() > 2)
+			throw std::domain_error(gettext("insufficient privileges on target context"));
+	}
+	else 
+	{
+		if(getAuthLevel(_aid) < write_level)
+			throw std::domain_error(gettext("insufficient privileges"));
+
+		if(_ctx->getAuthLevel(_aid) < _ctx->getAddLevel()
+			&& _ctx->getAddLevel() > 2)
+			throw std::domain_error(gettext("insufficient privileges on target context"));
+	}
+	ctx = _ctx;
+	oid = _aid;
+	read_level = ctx->getReadLevel();
+	add_level = ctx->getAddLevel();
+	write_level = ctx->getWriteLevel();
 }
 
-void BaseObject::setText(const std::string& s)
+void BaseObject::setContext(const std::string& _name, const unsigned int _aid)
 {
-	text = s;
+	CachedContext _ctx(_name);
+	setContext(_ctx, _aid);
 }
 
-void BaseObject::setAuthor(const std::string& s)
+void BaseObject::setContext(const unsigned int _cid, const unsigned int _aid)
 {
-	author = s;
+	CachedContext _ctx(_cid);
+	setContext(_ctx, _aid);
+}
+
+void BaseObject::setOwner(const unsigned int _oid, const unsigned int _aid)
+{	
+	if(getAuthLevel(_aid) < write_level)
+		throw std::domain_error(gettext("insufficient privileges"));
+	oid = _oid;
+}
+
+void BaseObject::setReadLevel(const unsigned char _lev, const unsigned int _aid)
+{
+	unsigned char _priv = getAuthLevel(_aid);
+	if(_priv < write_level)
+		throw std::domain_error(gettext("insufficient privileges"));
+	if(_lev > 62 && _lev > _priv)
+		throw std::domain_error(gettext("can't raise privileges above 62"));
+	if(_lev > 126)
+		throw std::domain_error(gettext("can't raise privileges above 126"));
+	read_level = _lev;
+}
+
+void BaseObject::setAddLevel(const unsigned char _lev, const unsigned int _aid)
+{
+	unsigned char _priv = getAuthLevel(_aid);
+	if(_priv < write_level)
+		throw std::domain_error(gettext("insufficient privileges"));
+	if(_lev > 62 && _lev > _priv)
+		throw std::domain_error(gettext("can't raise privileges above 62"));
+	if(_lev > 126)
+		throw std::domain_error(gettext("can't raise privileges above 126"));
+	add_level = _lev;
+}
+
+void BaseObject::setWriteLevel(const unsigned char _lev, const unsigned int _aid)
+{
+	unsigned char _priv = getAuthLevel(_aid);
+	if(_priv < write_level)
+		throw std::domain_error(gettext("insufficient privileges"));
+	if(_lev > 62 && _lev > _priv)
+		throw std::domain_error(gettext("can't raise privileges above 62"));
+	if(_lev > 126)
+		throw std::domain_error(gettext("can't raise privileges above 126"));
+	write_level = _lev;
 }
 
 //end BaseObject

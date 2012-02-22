@@ -41,29 +41,35 @@ class Comment: public BaseObject
 {
 	unsigned int ref_id;
 	unsigned int art_id;
+	std::string text;
+	std::string author;
 	std::string homepage;
 	std::string mail;
 
     public:
-	Comment() :
+	Comment() : BaseObject("comments"),
 		ref_id(0),
 		art_id(0) {}
-	explicit Comment(const unsigned int);
+	explicit Comment(const unsigned int, const unsigned int = 0);
 	operator bool() const;
 	Comment* operator->() { return this; }
 	void clear();
 
 	const unsigned int getRef() const;
 	const unsigned int getArticle() const;
+	const std::string& getText() const;
+	const std::string& getAuthor() const;
 	const std::string& getHomepage() const;
 	const std::string& getMail() const;
 
 	void setRef(const unsigned int);
 	void setArticle(const unsigned int);
+	void setText(const std::string&);
+	void setAuthor(const std::string&);
 	void setHomepage(const std::string&);
 	void setMail(const std::string&);
-	void dbInsert();
-	void dbUpdate();
+
+	void dbCommit(const unsigned int = 0);
 };
 
 } //namespace vagra

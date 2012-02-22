@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 by Julian Wiesener
+ * Copyright (C) 2011 Tommi Maekitalo
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,21 +26,68 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef VARGA_COMMENTPAGE_H
-#define VARGA_COMMENTPAGE_H
+#ifndef CXXTOOLS_MD5_H
+#define CXXTOOLS_MD5_H
 
-#include <vagra/page.h>
-#include <vagra/comment/cachedcomment.h>
+#include <cxxtools/legacy_md5.h>
+#include <cxxtools/md5stream.h>
+#include <iterator>
+#include <algorithm>
 
-namespace vagra
+namespace cxxtools
 {
 
-class CommentPage: public Page<CachedComment>
+template <typename iterator_type>
+std::string md5(iterator_type from, iterator_type to)
 {
-    public:
-	CommentPage(const std::vector<unsigned int>&, unsigned int, unsigned int = 0);
+  Md5stream s;
+  std::copy(from, to, std::ostream_iterator<char>(s));
+  return s.getHexDigest();
+}
+
+template <typename data_type>
+std::string md5(const data_type& data)
+{
+  Md5stream s;
+  s << data;
+  return s.getHexDigest();
+}
+
+template <typename data_type> class md5_hash
+{
+  md5_hash() {}
+  Md5stream s;
+  std::string digest;
+
+public:
+  explicit md5_hash(const data_type& data)
+    : digest(16, 0x00)
+  {
+    unsigned char _digest[16];
+    s << data;
+    s.getDigest(_digest);
+    std::copy(_digest, _digest+16, digest.begin());
+  }
+
+  md5_hash(typename data_type::const_iterator from, 
+		  typename data_type::const_iterator to)
+    : digest(16, 0x00)
+  {
+    unsigned char _digest[16];
+    std::copy(from, to, std::ostream_iterator<char>(s));
+    s.getDigest(_digest);
+    std::copy(_digest, _digest+16, digest.begin());
+  }
+
+  unsigned short blockSize() { return 64; }
+
+  std::string getHexDigest()
+  { return s.getHexDigest(); }
+
+  std::string getDigest()
+  { return digest; }
 };
 
-} //namespace vagra
+}
 
-#endif // VARGA_COMMENTPAGE_H
+#endif  // V_CXXTOOLS_MD5_H

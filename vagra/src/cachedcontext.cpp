@@ -26,22 +26,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef VARGA_ARTICLEPAGE_H
-#define VARGA_ARTICLEPAGE_H
-
-#include <vagra/page.h>
-#include <vagra/article/cachedarticle.h>
+#include <vagra/cachedcontext.h>
 
 namespace vagra
 {
 
-class ArtPage: public Page
+CachedContext::CachedContext(const std::string _name, const unsigned int _aid)
 {
-    public:
-	ArtPage(const std::vector<unsigned int>&, unsigned int, unsigned int = 0);
-	ArtPage(unsigned int, unsigned int = 0);
-};
+	ContextCache& ctx_cache = ContextCache::getInstance();
+	ctx = ctx_cache.get(cachedGetContextIdByName(_name), 1); //FIXME assume admin as 1
+}
+
+CachedContext::CachedContext(const unsigned int _id, const unsigned int _aid)
+{
+	ContextCache& ctx_cache = ContextCache::getInstance();
+	ctx = ctx_cache.get(_id, 1); //FIXME assume admin as 1
+}
+
+CachedContext::operator bool() const
+{
+	return *ctx;
+}
 
 } //namespace vagra
-
-#endif // VARGA_ARTICLEPAGE_H
