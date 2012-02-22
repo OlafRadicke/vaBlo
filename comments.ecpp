@@ -30,7 +30,7 @@
 
   #include <vagra/article/cachedarticle.h>
   #include <vagra/comment/cachedcomment.h>
-  #include <vagra/comment/commentpage.h>
+  #include <vagra/page.h>
   #include <vagra/helpers.h>
 </%pre>
 <%cpp>
@@ -59,19 +59,25 @@ try {
 <%cpp>
   if(i_art_id) {
     if(article->getCommentAmount()) {  
-      vagra::CommentPage pg(article->getCommentIds(), 
+      vagra::Page pg(article->getCommentIds(), 
       vagra::str2Pagenum(request.getArgDef(0,"1")));
 </%cpp>
   <h4 id="comments">Comments</h4>
 <%cpp>
-    for (vagra::CommentPage::const_iterator it = pg.begin();
+    for (vagra::Page::const_iterator it = pg.begin();
       it != pg.end(); it++) {
-      const vagra::CachedComment& comment = *it;
+    try {
+      vagra::CachedComment comment(*it);
 </%cpp>
 <%include>
   inc/comment.ecpp
 </%include>
-%     }
+<%cpp>
+    } catch(const std::exception& er_comm) {
+        log_error(er_comm.what());
+    }
+  }
+</%cpp>
 <%include>
   inc/pager.ecpp
 </%include>

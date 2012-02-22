@@ -28,10 +28,14 @@
 <%pre>
   #include <tnt/savepoint.h>
 
+  #include <vagra/passwd/auth.h>
   #include <vagra/article/cachedarticle.h>
   #include <vagra/article/articlepage.h>
   #include <vagra/helpers.h>
 </%pre>
+<%session scope="global">
+  vagra::Auth auth;
+</%session>
 <%cpp>
   std::string title(vagra::getConfig("site_name"));
   std::string page_url("/admin/");
@@ -48,12 +52,18 @@ try {
   for (vagra::ArtPage::const_iterator it = pg.begin();
 	it != pg.end(); it++)
   {
-  	const vagra::CachedArticle& article = *it;
+     try {
+	vagra::CachedArticle article(*it, auth);
 </%cpp>
 <%include>
   inc/article_admin.ecpp
 </%include>
-% }
+<%cpp>
+    } catch(const std::exception& er_art) {
+        log_error(er_art.what());
+    }
+  }
+</%cpp>
 <%include>
   inc/pager.ecpp
 </%include>

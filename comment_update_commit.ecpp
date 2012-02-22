@@ -28,6 +28,7 @@
 <%pre>
   #include <tnt/savepoint.h>
 
+  #include <vagra/passwd/auth.h>
   #include <vagra/article/cachedarticle.h>
   #include <vagra/comment/comment.h>
 </%pre>
@@ -35,6 +36,7 @@
   std::string title("Comment updated");
 </%cpp>
 <%session scope="global">
+  vagra::Auth auth;
   vagra::Comment comment;
 </%session>
 <%include>
@@ -45,14 +47,14 @@
 try {
   tnt::Savepoint sp(reply);
   if(comment) {
-    comment.dbUpdate();
+    comment.dbCommit(auth);
 </%cpp>
   <h4>Committed comment</h4>
 <%include> 
   inc/comment.ecpp
 </%include>
-  <a href="/admin/article/<$ vagra::CachedArticle(comment.getArticle())->getUrl() $>">Edit article</a>
-  <a href="/admin/comments/<$ vagra::CachedArticle(comment.getArticle())->getUrl() $>#comments">Edit comments</a>
+  <a href="/admin/article/<$ vagra::CachedArticle(comment.getArticle(), auth)->getUrl() $>">Edit article</a>
+  <a href="/admin/comments/<$ vagra::CachedArticle(comment.getArticle(), auth)->getUrl() $>#comments">Edit comments</a>
 % } else {
     <p class="warn">Invalid comment!</p>
     <p class="warn">You might need to enable session cookies.</p>

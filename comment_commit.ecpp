@@ -44,7 +44,8 @@
 try {
   tnt::Savepoint sp(reply);
   if(comment) {
-    comment.dbInsert();
+    comment.setContext("comments");
+    comment.dbCommit();
 </%cpp>
   <h4>Committed comment</h4>
 <%include> 

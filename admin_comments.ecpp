@@ -28,11 +28,15 @@
 <%pre>
   #include <tnt/savepoint.h>
 
+  #include <vagra/passwd/auth.h>
   #include <vagra/article/cachedarticle.h>
   #include <vagra/comment/cachedcomment.h>
-  #include <vagra/comment/commentpage.h>
+  #include <vagra/page.h>
   #include <vagra/helpers.h>
 </%pre>
+<%session scope="global">
+  vagra::Auth auth;
+</%session>
 <%cpp>
   std::string title(request.getPathInfo());
   std::string page_url("/admin/comments/" + title + "/");
@@ -51,7 +55,7 @@
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
-  vagra::CachedArticle article(title);
+  vagra::CachedArticle article(title, auth);
   i_art_id = article->getId();
 </%cpp>
 <%include>
@@ -60,19 +64,25 @@ try {
 <%cpp>
   if(i_art_id) {
     if(article->getCommentAmount()) {  
-      vagra::CommentPage pg(article->getCommentIds(), 
+      vagra::Page pg(article->getCommentIds(), 
       vagra::str2Pagenum(request.getArgDef(0,"1")));
 </%cpp>
   <h4 id="comments">Comments</h4>
 <%cpp>
-    for (vagra::CommentPage::const_iterator it = pg.begin();
+    for (vagra::Page::const_iterator it = pg.begin();
       it != pg.end(); it++) {
-      const vagra::CachedComment& comment = *it;
+    try {
+      vagra::CachedComment comment(*it, auth);
 </%cpp>
 <%include>
   inc/comment_admin.ecpp
 </%include>
-%     }
+<%cpp>
+    } catch(const std::exception& er_art) {
+        log_error(er_art.what());
+    }
+  }
+</%cpp>
 <%include>
   inc/pager.ecpp
 </%include>

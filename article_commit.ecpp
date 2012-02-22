@@ -28,12 +28,14 @@
 <%pre>
   #include <tnt/savepoint.h>
 
+  #include <vagra/passwd/auth.h>
   #include <vagra/article/articlecache.h>
 </%pre>
 <%cpp>
   std::string title("Article committed");
 </%cpp>
 <%session scope="global">
+  vagra::Auth auth;
   vagra::Article article;
 </%session>
 <%include>
@@ -44,11 +46,8 @@
 try {
   tnt::Savepoint sp(reply);
   if(article) {
-    if(article.getId())
-      article.dbUpdate();
-    else
-      article.dbInsert();
-    article = vagra::Article(article.getId());
+    article.dbCommit(auth);
+    article = vagra::Article(article.getId(),auth);
 </%cpp>
   <h4>Committed Article</h4>
 <%include> 

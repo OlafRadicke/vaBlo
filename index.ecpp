@@ -32,6 +32,7 @@
   #include <vagra/article/articlepage.h>
   #include <vagra/helpers.h>
   #include <vagra/config.h>
+  #include <vagra/cachedsearch.h>
 </%pre>
 <%cpp>
   std::string title(vagra::getConfig("site_name"));
@@ -43,25 +44,36 @@
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
-  vagra::ArtPage pg(vagra::str2Pagenum(request.getPathInfo()));
+  vagra::CachedSearch<vagra::Article> search;
+
+  search.setOrderAsc(false);
+  search.setContext("public");
+
+  vagra::ArtPage pg(search.getResults(), vagra::str2Pagenum(request.getPathInfo()));
 
   for (vagra::ArtPage::const_iterator it = pg.begin();
 	it != pg.end(); it++)
   {
-  	const vagra::CachedArticle& article = *it;
+     try {
+  	vagra::CachedArticle article(*it);
 </%cpp>
 <%include>
   inc/article_pre.ecpp
 </%include>
-% }
+<%cpp>
+    } catch(const std::exception& er_art) {
+	log_error(er_art.what());
+    }
+  }
+</%cpp>
 <%include>
   inc/pager.ecpp
 </%include>
 <%cpp>
   sp.commit();
 }
-catch(const std::exception& er_comm) {
-	reply.out() << er_comm.what() << std::endl;
+catch(const std::exception& er_art) {
+	reply.out() << er_art.what() << std::endl;
 }
 </%cpp>
 <%include>
