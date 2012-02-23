@@ -30,8 +30,10 @@
 
   #include <vagra/passwd/auth.h>
   #include <vagra/article/cachedarticle.h>
-  #include <vagra/article/articlepage.h>
-  #include <vagra/helpers.h>
+  #include <vagra/page.h>
+  #include <vagra/utils.h>
+  #include <vagra/config.h>
+  #include <vagra/cachedsearch.h>
 </%pre>
 <%session scope="global">
   vagra::Auth auth;
@@ -47,9 +49,13 @@
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
-  vagra::ArtPage pg(vagra::str2Pagenum(request.getPathInfo()));
 
-  for (vagra::ArtPage::const_iterator it = pg.begin();
+  vagra::CachedSearch<vagra::Article> search;
+  search.setOrderAsc(false);
+
+  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getPathInfo()));
+
+  for (vagra::Page::const_iterator it = pg.begin();
 	it != pg.end(); it++)
   {
      try {

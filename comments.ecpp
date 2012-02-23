@@ -31,7 +31,7 @@
   #include <vagra/article/cachedarticle.h>
   #include <vagra/comment/cachedcomment.h>
   #include <vagra/page.h>
-  #include <vagra/helpers.h>
+  #include <vagra/utils.h>
 </%pre>
 <%cpp>
   std::string title(request.getPathInfo());

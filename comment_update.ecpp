@@ -30,7 +30,7 @@
 
   #include <vagra/article/cachedarticle.h>
   #include <vagra/comment/comment.h>
-  #include <vagra/helpers.h>
+  #include <vagra/utils.h>
 </%pre>
 <%cpp>
   std::string title("Edit Comment");

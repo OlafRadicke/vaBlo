@@ -29,10 +29,10 @@
   #include <tnt/savepoint.h>
 
   #include <vagra/article/cachedarticle.h>
-  #include <vagra/article/articlepage.h>
   #include <vagra/article/articlesearch.h>
+  #include <vagra/page.h>
+  #include <vagra/utils.h>
   #include <vagra/cachedsearch.h>
-  #include <vagra/helpers.h>
 </%pre>
 <%cpp>
   std::string title(vagra::getConfig("site_name"));
@@ -51,9 +51,9 @@ try {
   search.setContext("public");
   search.setTag(path_info);
 
-  vagra::ArtPage pg(search.getResults(), vagra::str2Pagenum(request.getArgDef(0,"1")));
+  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getArgDef(0,"1")));
 
-  for (vagra::ArtPage::const_iterator it = pg.begin();
+  for (vagra::Page::const_iterator it = pg.begin();
        it != pg.end(); it++)
   {
     try {
