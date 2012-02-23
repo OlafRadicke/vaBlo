@@ -1,0 +1,13 @@
+ INSTALL FROM GIT
+------------------
+
+git clone git://git.vtoc.de/vagra
+ln -s vagra/Makefile.inv
+
+edit Makefile.inc
+
+set compiler/linker flags suitable for your system
+
+make sure the following modules are enabled:
+
+MODULES = article comment user passwd
