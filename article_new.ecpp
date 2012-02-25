@@ -34,8 +34,8 @@
   std::string title("New Article");
 </%cpp>
 <%include>
-  inc/auth.ecpp
   inc/header.ecpp
+  inc/auth.ecpp
 </%include>
 <%cpp>
 try {

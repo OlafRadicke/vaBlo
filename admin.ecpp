@@ -28,29 +28,26 @@
 <%pre>
   #include <tnt/savepoint.h>
 
-  #include <vagra/passwd/auth.h>
   #include <vagra/article/cachedarticle.h>
   #include <vagra/page.h>
   #include <vagra/utils.h>
   #include <vagra/config.h>
   #include <vagra/cachedsearch.h>
 </%pre>
-<%session scope="global">
-  vagra::Auth auth;
-</%session>
 <%cpp>
   std::string title(vagra::getConfig("site_name"));
   std::string page_url("/admin/");
 </%cpp>
 <%include>
-  inc/auth.ecpp
   inc/header.ecpp
+  inc/auth.ecpp
 </%include>
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
 
   vagra::CachedSearch<vagra::Article> search;
+  search.setReadLevel(254);
   search.setOrderAsc(false);
 
   vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getPathInfo()));

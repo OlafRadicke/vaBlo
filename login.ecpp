@@ -28,11 +28,16 @@
 <%pre>
   #include <tnt/savepoint.h>
 
-  #include <vagra/article/articlecache.h>
+  #include <vagra/config.h>
+  #include <vagra/user/cacheduser.h>
 </%pre>
 <%cpp>
-  std::string title("Update Article");
+ std::string title("login");
 </%cpp>
+<%args>
+  std::string i_user;
+  std::string i_passwd;
+</%args>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp
@@ -41,34 +46,39 @@
 try {
   tnt::Savepoint sp(reply);
 
-  vagra::Article article(request.getPathInfo(),auth);
-  if(article.getId()) {
-    unsigned int i_art_id = article.getId();
-    std::string i_title(article.getTitle());
-    std::string i_name(article.getAuthor());
-    std::string i_head(article.getHead());
-    std::string i_abstract(article.getAbstract());
-    std::string i_text(article.getText());
-    std::string i_tags(article.getTagString());
-</%cpp>
-<%include>
-  inc/article_full.ecpp
-</%include>
-  <a href="/admin/comments/<$ article->getUrl() $>#comments">Edit comments</a>
-  <h4>Modify Article</h4>
-<%include>
-  inc/article_form.ecpp
-</%include>
-%  } else {
-<%include>
-  inc/article_full.ecpp
-</%include>
-<%cpp>
+  if(!i_user.empty() && !i_passwd.empty()) {
+    vagra::CachedUser user(i_user);
+    auth = vagra::Auth(user, i_passwd);
+  }
+  if(auth) {
+    if(!orig_query.empty() && orig_query != request.getQuery()) {
+      reply.redirect(orig_query);
+    }
+    else {
+      reply.out() << "<p>login successful</p>";
+    }
+  }
+  else {
+   if(!i_user.empty())
+     reply.out() << "<p class=\"warn\">Login failed!</p>";
+    </%cpp>
+      <form action="/admin/login" method="post">
+        <fieldset>
+          <legend>Login</legend>
+          <label for="user">User</label>
+            <input type="user" name="i_user" id="user" value="<$ i_user$>" />
+          <label for="passwd">Password</label>
+            <input type="password" name="i_passwd" id="passwd" value="" />
+          <div class="submit"><input type="submit" value="Login" /></div>
+        </fieldset>
+      </form>
+    <%cpp>
   }
   sp.commit();
 }
 catch(const std::exception& er_comm) {
-  reply.out() << er_comm.what() << std::endl;
+  reply.out() << "<p class=\"warn\">Login failed!</p>";
+  log_error(er_comm.what());
 }
 </%cpp>
 <%include>

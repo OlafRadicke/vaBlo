@@ -97,6 +97,16 @@ dl.tags a {
 	z-index: 30;
 }
 
+#auth_info {
+	text-align: right;
+	position: absolute;
+	display: block;
+	margin-top: -13em;
+	margin-left: 8em;
+	width: 100%;
+	z-index: 40;
+}
+
 div.article {
 	margin-bottom: 3em;
 }

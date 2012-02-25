@@ -28,7 +28,6 @@
 <%pre>
   #include <tnt/savepoint.h>
 
-  #include <vagra/passwd/auth.h>
   #include <vagra/article/cachedarticle.h>
   #include <vagra/comment/comment.h>
 </%pre>
@@ -36,12 +35,11 @@
   std::string title("Comment updated");
 </%cpp>
 <%session scope="global">
-  vagra::Auth auth;
   vagra::Comment comment;
 </%session>
 <%include>
-  inc/auth.ecpp
   inc/header.ecpp
+  inc/auth.ecpp
 </%include>
 <%cpp>
 try {

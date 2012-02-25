@@ -28,24 +28,23 @@
 <%pre>
   #include <tnt/savepoint.h>
 
-  #include <vagra/passwd/auth.h>
   #include <vagra/article/articlecache.h>
 </%pre>
 <%cpp>
   std::string title("Article committed");
 </%cpp>
 <%session scope="global">
-  vagra::Auth auth;
   vagra::Article article;
 </%session>
 <%include>
-  inc/auth.ecpp 
   inc/header.ecpp
+  inc/auth.ecpp 
 </%include>
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
   if(article) {
+    article.setContext("public",auth);
     article.dbCommit(auth);
     article = vagra::Article(article.getId(),auth);
 </%cpp>

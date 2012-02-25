@@ -46,14 +46,14 @@
   vagra::Article article;
 </%session>
 <%include>
-  inc/auth.ecpp
   inc/header.ecpp
+  inc/auth.ecpp
 </%include>
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
   if(i_art_id)
-    article = vagra::Article (i_art_id);
+    article = vagra::Article(i_art_id, auth);
   else {
     article.clear();
     article.setTitle(i_title);

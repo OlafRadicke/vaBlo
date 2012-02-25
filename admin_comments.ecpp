@@ -28,15 +28,11 @@
 <%pre>
   #include <tnt/savepoint.h>
 
-  #include <vagra/passwd/auth.h>
   #include <vagra/article/cachedarticle.h>
   #include <vagra/comment/cachedcomment.h>
   #include <vagra/page.h>
   #include <vagra/utils.h>
 </%pre>
-<%session scope="global">
-  vagra::Auth auth;
-</%session>
 <%cpp>
   std::string title(request.getPathInfo());
   std::string page_url("/admin/comments/" + title + "/");
@@ -49,8 +45,8 @@
   unsigned int i_comm_id = 0;
 </%cpp>
 <%include>
-  inc/auth.ecpp
   inc/header.ecpp
+  inc/auth.ecpp
 </%include>
 <%cpp>
 try {

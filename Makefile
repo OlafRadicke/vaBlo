@@ -8,12 +8,11 @@ tnt/libvagra.so:
 	cd vagra && $(MAKE)
 	cp vagra/libvagra.so tnt/
 
-OBJECTS  = index.o article.o categories.o
+OBJECTS  = index.o article.o categories.o feed_atom.o
 OBJECTS += comments.o comment.o comment_commit.o comment_reply.o
 OBJECTS += article_new.o article_preview.o article_commit.o article_update.o
 OBJECTS += admin.o admin_comments.o comment_update.o comment_update_commit.o
-OBJECTS += error_404.o expire.o
-OBJECTS += feed_atom.o
+OBJECTS += error_404.o expire.o login.o
 
 vablo.so: ${OBJECTS}
 	${CXX} -o $@ ${LDFLAGS} -lvagra -Ltnt $^

@@ -27,9 +27,42 @@
 </%doc>
 <%pre>
   #include <vagra/config.h>
+  #include <vagra/passwd/auth.h>
+  #include <vagra/user/cacheduser.h>
 </%pre>
+<%session scope="global">
+  vagra::Auth auth;
+  std::string orig_query;
+  bool redirected = false;
+  bool cookies = false;
+</%session>
 <%cpp>
-  if (request.getUsername() != "admin" || !request.verifyPassword(vagra::getConfig("admin_pw"))) {
-    reply.notAuthorized("login required");
+  if(!cookies) {
+    if(request.getQueryString() == "cookietest")
+      reply.redirect("/error/nocookie");
+    orig_query = request.getQuery();
+    cookies = true;
+    reply.redirect("/admin/login?cookietest");
+  }  
+  if (!redirected && !auth) {
+    redirected = true;
+    reply.redirect("/admin/login");
+  }
+  if(auth) {
+    try {
+      tnt::Savepoint sp(reply);
+      vagra::CachedUser user(auth,auth);
+</%cpp>
+  <div id="auth_info"> 
+    <p>Logged in as <a href="/admin/user/<$ user->getLogname() $>"><$ user->getDispname() $></a>
+    | <a href="/admin/logout">Logout</a><p>
+  </div>
+<%cpp>
+      sp.commit();
+    } catch(const std::exception& er_auth) {
+      log_error(er_auth.what());
+      orig_query.clear();
+      auth = vagra::Auth();
+    }
   }
 </%cpp>
