@@ -6,7 +6,7 @@ body {
 	font-family: "Verdana", "Arial", sans-serif;
 	margin: 0;
 	padding: 0;
-	background-color: #faf6e8;
+	background-color: #fcf9f9;
 }
 
 a {
@@ -28,7 +28,7 @@ a:visited {
 }
 
 #background {
-	background-color: #ddd2d2;
+	background-color: #c6c2c2;
 	margin: 2em;
 }
 
@@ -76,13 +76,14 @@ dl.tags a {
 	text-decoration: none;
 	text-align: left;
 	outline-style: none;
+	color: #2d2626;
 }
 
 #content {
 	margin-top: 0;
 	margin-right: 10em;
 	position: relative;
-	background-color: #f1e4e4;
+	background-color: #eae6e6;
 	padding-top: 1em;
 	padding-bottom: 5em;
 	padding-right: 2em;
@@ -231,7 +232,7 @@ textarea {
 	height: 12em;
 }
 
-div.submit input {
+div.fl_submit input {
 	margin-top: 1em;
 }
 

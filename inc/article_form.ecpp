@@ -33,16 +33,16 @@
       <label for="title">Title<span class="desc">(will be part of the URL, _ are handled as spaces)</span></label>
 	<input type="text" name="i_title" id="title" value="<$ i_title $>" />
 %   }
-      <label for="name">Author Name</label>
-	<input type="text" name="i_name" id="name" value="<$ i_name $>" />
-      <label for="haedline">Headline</label>
-	<input type="text" name="i_head" id="headline" value="<$ i_head $>" />
-      <label for="abstrace">Abstract</label>
-	<textarea name="i_abstract" id="abstract"><$ i_abstract $></textarea>
-      <label for="article">Article text</label>
-	<textarea name="i_text" id="article"><$ i_text $></textarea>
-      <label for="tags">Tags<span class="desc">(comma separated)</span></label>
-	<input type="text" name="i_tags" id="tags" value="<$ i_tags$>" />
-      <div class="submit"><input type="submit" value="Preview" /></div>
+      <label for="fl_name">Author Name</label>
+	<input type="text" name="i_name" id="fl_name" value="<$ i_name $>" />
+      <label for="fl_haedline">Headline</label>
+	<input type="text" name="i_head" id="fl_headline" value="<$ i_head $>" />
+      <label for="fl_abstrace">Abstract</label>
+	<textarea name="i_abstract" id="fl_abstract"><$ i_abstract $></textarea>
+      <label for="fl_article">Article text</label>
+	<textarea name="i_text" id="fl_article"><$ i_text $></textarea>
+      <label for="fl_tags">Tags<span class="desc">(comma separated)</span></label>
+	<input type="text" name="i_tags" id="fl_tags" value="<$ i_tags$>" />
+      <div class="fl_submit"><input type="submit" value="Preview" /></div>
     </fieldset>
   </form>

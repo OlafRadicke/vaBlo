@@ -35,14 +35,14 @@
       <input type="hidden" name="i_art_id" value="<$ i_art_id $>" />
       <input type="hidden" name="i_comm_id" value="<$ i_comm_id $>" />
       <input type="hidden" name="i_ref_id" value="<$ i_ref_id $>" />
-      <label for="name">Your Name</label>
-	<input type="text" name="i_name" id="name" value="<$ i_name $>" />
-      <label for="mail">eMail Address<span class="desc">(will not be published)</span></label>
-	<input type="text" name="i_mail" id="mail" value="<$ i_mail $>" />
-      <label for="home">Homepage</label>
-	<input type="text" name="i_home" id="home" value="<$ i_home $>" />
-      <label for="comment">Comment text</label>
-	<textarea name="i_text" id="comment"><$ i_text $></textarea>
-      <div class="submit"><input type="submit" value="Preview" /></div>
+      <label for="fl_name">Your Name</label>
+	<input type="text" name="i_name" id="fl_name" value="<$ i_name $>" />
+      <label for="fl_mail">eMail Address<span class="desc">(will not be published)</span></label>
+	<input type="text" name="i_mail" id="fl_mail" value="<$ i_mail $>" />
+      <label for="fl_home">Homepage</label>
+	<input type="text" name="i_home" id="fl_home" value="<$ i_home $>" />
+      <label for="fl_comment">Comment text</label>
+	<textarea name="i_text" id="fl_comment"><$ i_text $></textarea>
+      <div class="fl_submit"><input type="submit" value="Preview" /></div>
     </fieldset>
   </form>

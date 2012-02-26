@@ -28,23 +28,11 @@
 <%pre>
   #include <tnt/savepoint.h>
 
-  #include <vagra/article/articlecache.h>
+  #include <vagra/config.h>
 </%pre>
 <%cpp>
-  std::string title("Article preview");
+ std::string title("logout");
 </%cpp>
-<%args>
-  unsigned int i_art_id;
-  std::string i_title;
-  std::string i_name;
-  std::string i_head;
-  std::string i_abstract;
-  std::string i_text;
-  std::string i_tags;
-</%args>
-<%session scope="global">
-  vagra::Article article;
-</%session>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp
@@ -52,46 +40,14 @@
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
-  if(i_art_id)
-    article = vagra::Article(i_art_id, auth);
-  else {
-    article.clear();
-    article.setTitle(i_title);
-  }
+  request.clearSession();
 
-  article.setAuthor(i_name);
-  article.setHead(i_head);
-  article.setAbstract(i_abstract);
-  article.setText(i_text);
-  article.setTags(i_tags);
+  reply.out() << "<p>Logged out!</p>";
 
-  if(article) {
-</%cpp>
-<%include>
-  inc/article_full.ecpp
-</%include>
-  <form action="/admin/article/commit" method="get">
-    <div class="fl_submit"><input type="submit" value="Commit" /></div>
-  </form>
-<%cpp>
-   } else {
-     if(i_title.empty())
-	reply.out() << "<p class=\"warn\">Title can't be empty!</p>";
-     if(i_head.empty())
-	reply.out() << "<p class=\"warn\">Headline can't be empty!</p>";
-     if(i_text.empty() && i_abstract.empty())
-	reply.out() << "<p class=\"warn\">Text or Abstract must not be empty!</p>";
-   }
-</%cpp>
-  <h4>Modify Article</h4>
-<%include>
-  inc/article_form.ecpp
-</%include>
-<%cpp>
   sp.commit();
 }
 catch(const std::exception& er_comm) {
-  reply.out() << er_comm.what() << std::endl;
+  log_error(er_comm.what());
 }
 </%cpp>
 <%include>

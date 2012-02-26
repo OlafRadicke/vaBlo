@@ -84,7 +84,7 @@ try {
 </%include>
 % if(ready) {
     <form action="/admin/comment/commit" method="get">
-      <div class="submit"><input type="submit" value="Commit" /></div>
+      <div class="fl_submit"><input type="submit" value="Commit" /></div>
     </form>
 % }
 <%include>

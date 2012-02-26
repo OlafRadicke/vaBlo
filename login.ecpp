@@ -52,6 +52,7 @@ try {
   }
   if(auth) {
     if(!orig_query.empty() && orig_query != request.getQuery()) {
+      sp.commit();
       reply.redirect(orig_query);
     }
     else {
@@ -65,11 +66,11 @@ try {
       <form action="/admin/login" method="post">
         <fieldset>
           <legend>Login</legend>
-          <label for="user">User</label>
-            <input type="user" name="i_user" id="user" value="<$ i_user$>" />
-          <label for="passwd">Password</label>
-            <input type="password" name="i_passwd" id="passwd" value="" />
-          <div class="submit"><input type="submit" value="Login" /></div>
+          <label for="fl_user">User</label>
+            <input type="user" name="i_user" id="fl_user" value="<$ i_user$>" />
+          <label for="fl_passwd">Password</label>
+            <input type="password" name="i_passwd" id="fl_passwd" value="" />
+          <div class="fl_submit"><input type="submit" value="Login" /></div>
         </fieldset>
       </form>
     <%cpp>
