@@ -28,7 +28,7 @@
 <%pre>
   #include <tnt/savepoint.h>
 
-  #include <vagra/article/articlecache.h>
+  #include <vagra/article/cachedarticle.h>
 </%pre>
 <%cpp>
   std::string title("Article committed");
@@ -44,9 +44,8 @@
 try {
   tnt::Savepoint sp(reply);
   if(article) {
-    article.setContext("public",auth);
     article.dbCommit(auth);
-    article = vagra::Article(article.getId(),auth);
+    article = *(vagra::CachedArticle(article.getId(),auth));
 </%cpp>
   <h4>Committed Article</h4>
 <%include> 

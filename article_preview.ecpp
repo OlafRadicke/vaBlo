@@ -34,7 +34,8 @@
   std::string title("Article preview");
 </%cpp>
 <%args>
-  unsigned int i_art_id;
+  unsigned int i_art_id = 0;
+  unsigned int i_readlevel = 8;
   std::string i_title;
   std::string i_name;
   std::string i_head;
@@ -64,6 +65,9 @@ try {
   article.setAbstract(i_abstract);
   article.setText(i_text);
   article.setTags(i_tags);
+  if(!article.getContext())
+    article.setContext("public", auth);
+  article.setReadLevel(i_readlevel, auth);
 
   if(article) {
 </%cpp>

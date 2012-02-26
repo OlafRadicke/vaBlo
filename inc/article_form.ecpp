@@ -35,14 +35,21 @@
 %   }
       <label for="fl_name">Author Name</label>
 	<input type="text" name="i_name" id="fl_name" value="<$ i_name $>" />
-      <label for="fl_haedline">Headline</label>
+      <label for="fl_headline">Headline</label>
 	<input type="text" name="i_head" id="fl_headline" value="<$ i_head $>" />
-      <label for="fl_abstrace">Abstract</label>
-	<textarea name="i_abstract" id="fl_abstract"><$ i_abstract $></textarea>
+      <label for="fl_abstract">Abstract</label>
+	<textarea name="i_abstract" id="fl_abstract" rows="10" cols="80"><$ i_abstract $></textarea>
       <label for="fl_article">Article text</label>
-	<textarea name="i_text" id="fl_article"><$ i_text $></textarea>
+	<textarea name="i_text" id="fl_article" rows="30" cols="80"><$ i_text $></textarea>
       <label for="fl_tags">Tags<span class="desc">(comma separated)</span></label>
 	<input type="text" name="i_tags" id="fl_tags" value="<$ i_tags$>" />
+      <label for="fl_readlevel">ReadLevel<span class="desc">(who is allowed to read this article)</span></label>
+	<select name="i_readlevel" id="fl_readlevel">
+          <option value="2" <$$ i_readlevel == 2 ? "selected=\"selected\" " : "" $>>Public</option>
+          <option value="8" <$$ i_readlevel == 8 ? "selected=\"selected\" " : "" $>>Users</option>
+          <option value="14" <$$ i_readlevel == 14 ? "selected=\"selected\" " : "" $>>Context member</option>
+          <option value="30" <$$ i_readlevel == 30 ? "selected=\"selected\" " : "" $>>Admins and owner</option>
+        </select>
       <div class="fl_submit"><input type="submit" value="Preview" /></div>
     </fieldset>
   </form>

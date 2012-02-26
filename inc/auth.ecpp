@@ -57,7 +57,7 @@
 </%cpp>
   <div id="auth_info"> 
     <p>Logged in as <a href="/admin/user/<$ user->getLogname() $>"><$ user->getDispname() $></a>
-    | <a href="/admin/logout">Logout</a><p>
+    | <a href="/admin/logout">Logout</a></p>
   </div>
 <%cpp>
       sp.commit();

@@ -44,6 +44,7 @@ try {
   vagra::Article article(request.getPathInfo(),auth);
   if(article.getId()) {
     unsigned int i_art_id = article.getId();
+    unsigned int i_readlevel = article.getReadLevel();
     std::string i_title(article.getTitle());
     std::string i_name(article.getAuthor());
     std::string i_head(article.getHead());
