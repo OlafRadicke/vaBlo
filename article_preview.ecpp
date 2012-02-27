@@ -65,7 +65,7 @@ try {
   article.setAbstract(i_abstract);
   article.setText(i_text);
   article.setTags(i_tags);
-  if(!article.getContext())
+  if(!article.getContext()->getId())
     article.setContext("public", auth);
   article.setReadLevel(i_readlevel, auth);
 
