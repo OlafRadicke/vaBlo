@@ -39,9 +39,6 @@
   static std::string identifier(title);
   static std::string main_url(vagra::getConfig("site_url"));
 </%cpp>
-<%include>
-  inc/atom_header.ecpp
-</%include>
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
@@ -49,6 +46,12 @@ try {
   vagra::CachedSearch<vagra::Article> search;
   search.setOrderAsc(false);
   search.setContext("public");
+
+</%cpp>
+<%include>
+  inc/atom_header.ecpp
+</%include>
+<%cpp>
 
   vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getPathInfo()));
 
@@ -66,12 +69,14 @@ try {
         log_error(er_art.what());
     }
   }
+</%cpp>
+<%include>
+  inc/atom_footer.ecpp
+</%include>
+<%cpp>
   sp.commit();
 }
 catch(const std::exception& er_comm) {
 	reply.out() << er_comm.what() << std::endl;
 }
 </%cpp>
-<%include>
-  inc/atom_footer.ecpp
-</%include>

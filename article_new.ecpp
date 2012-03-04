@@ -28,7 +28,7 @@
 <%pre>
   #include <tnt/savepoint.h>
 
-  #include <vagra/article/articlecache.h>
+  #include <vagra/article/cachedarticle.h>
 </%pre>
 <%cpp>
   std::string title("New Article");

@@ -45,6 +45,7 @@ try {
   tnt::Savepoint sp(reply);
   if(article) {
     article.dbCommit(auth);
+    vagra::ArticleTagsPublic().updateResult();
     article = *(vagra::CachedArticle(article.getId(),auth));
 </%cpp>
   <h4>Committed Article</h4>

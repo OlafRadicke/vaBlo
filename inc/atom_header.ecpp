@@ -32,5 +32,5 @@
   <title><$ title $></title>
   <link href="<$ main_url $>feed/atom" rel="self" />
   <link href="<$ main_url $>" />
-  <updated><$ vagra::date2cdstr(vagra::updated()) $></updated>
+  <updated><$ vagra::date2cdstr(search.getMTime()) $></updated>
   <icon>/favicon.ico</icon>
