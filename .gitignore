@@ -2,3 +2,5 @@
 *.so
 vagra
 Makefile.inc
+tnt/tntnet.log
+tnt/vagra.conf
