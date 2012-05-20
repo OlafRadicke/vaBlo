@@ -35,7 +35,7 @@
   #include <vagra/cachedsearch.h>
 </%pre>
 <%cpp>
-  std::string title(vagra::getConfig("site_name"));
+  std::string title(vagra::getConfig("vablo", "site_name"));
   std::string path_info = request.getPathInfo();
   std::string page_url("/categories/" + path_info + "/");
 </%cpp>

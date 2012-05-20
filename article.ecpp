@@ -51,7 +51,7 @@ try {
   <h4 id="comments">Comments</h4>
 <%cpp>
    for(std::vector<unsigned int>::const_iterator it = comm_ids.begin();
-       it != comm_ids.end() && it < comm_ids.begin() + vagra::getConfig("article_site_comments", 5); it++) {
+       it != comm_ids.end() && it < comm_ids.begin() + vagra::getConfig("vablo", "article_site_comments", 5); it++) {
      vagra::CachedComment comment(*it);
 </%cpp>
 <%include>
