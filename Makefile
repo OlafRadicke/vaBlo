@@ -15,7 +15,7 @@ OBJECTS += admin.o admin_comments.o comment_update.o comment_update_commit.o
 OBJECTS += error_404.o expire.o login.o logout.o
 
 vablo.so: ${OBJECTS}
-	${CXX} -o $@ ${LDFLAGS} -lvagra -Ltntnet $^
+	${CXX} -o $@ ${LDFLAGS} -Ltnt -lvagra -ltntnet $^
 	cp vablo.so tnt/
 
 .SUFFIXES: .ecpp .gif .jpg .css .js .cpp .ico
