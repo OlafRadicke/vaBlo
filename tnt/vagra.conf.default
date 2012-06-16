@@ -20,6 +20,10 @@ page_size		= 10
 cache_size		= 128
 
 
+[article]
+#article module specific settings
+tagsum_size             = 16
+
 
 [vablo]
 # vaBlo specific settings	
