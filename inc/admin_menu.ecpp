@@ -25,59 +25,20 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 </%doc>
-<%pre>
-  #include <tnt/savepoint.h>
-
-  #include <vagra/article/cachedarticle.h>
-  #include <vagra/page.h>
-  #include <vagra/utils.h>
-  #include <vagra/config.h>
-  #include <vagra/cachedsearch.h>
-</%pre>
 <%cpp>
-  std::string title(vagra::getConfig("vablo", "site_name"));
-  std::string page_url("/admin/");
+  try {
+    tnt::Savepoint sp(reply);
 </%cpp>
-<%include>
-  inc/header.ecpp
-  inc/auth.ecpp
-  inc/admin_menu.ecpp
-</%include>
+  <div id="menu"> 
+    <p>
+      <a href="/admin/">Edit Article</a> <a href="/admin/article/new">New Article</a> |
+      <a href="/admin/user/">Edit User</a> <a href="/admin/user/new">New User</a> |
+      <a href="/admin/context">Edit Context</a> <a href="/admin/context/new">New Context</a>
+    </p>
+  </div>
 <%cpp>
-try {
-  tnt::Savepoint sp(reply);
-
-  vagra::CachedSearch<vagra::Article> search;
-  search.setReadLevel(254);
-  search.setOrderAsc(false);
-
-  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getPathInfo()));
-
-  for (vagra::Page::const_iterator it = pg.begin();
-	it != pg.end(); it++)
-  {
-     try {
-	vagra::CachedArticle article(*it, auth);
-</%cpp>
-<%include>
-  inc/article_admin.ecpp
-</%include>
-<%cpp>
-    } catch(const std::exception& er_art) {
-        log_error(er_art.what());
-    }
+    sp.commit();
+  } catch(const std::exception& er_menu) {
+    log_error(er_menu.what());
   }
 </%cpp>
-<%include>
-  inc/pager.ecpp
-</%include>
-<%cpp>
-  sp.commit();
-}
-catch(const std::exception& er_comm) {
-	reply.out() << er_comm.what() << std::endl;
-}
-</%cpp>
-<%include>
-  inc/footer.ecpp
-</%include>

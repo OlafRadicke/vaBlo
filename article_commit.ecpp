@@ -39,6 +39,7 @@
 <%include>
   inc/header.ecpp
   inc/auth.ecpp 
+  inc/admin_menu.ecpp
 </%include>
 <%cpp>
 try {

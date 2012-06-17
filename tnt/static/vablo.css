@@ -98,6 +98,27 @@ dl.tags a {
 	z-index: 30;
 }
 
+#menu {
+	background-color: #c6c2c2;
+	display: block;
+	margin-top: -1em;
+	margin-left: -2em;
+	margin-bottom: 2em;
+	padding-right: 4em;
+	width: 100%;
+}
+
+#menu p {
+	color: #2d2626;
+	margin: 0;
+	padding: 0.2em;
+}
+
+#menu a {
+	color: #2d2626;
+	padding: 0.2em;
+}
+
 #auth_info {
 	text-align: right;
 	position: absolute;
