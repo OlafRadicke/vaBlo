@@ -57,15 +57,17 @@ try {
 	it != pg.end(); it++)
   {
      try {
-	vagra::CachedArticle article(*it, auth);
+       tnt::Savepoint asp(reply);
+       vagra::CachedArticle article(*it, auth);
 </%cpp>
 <%include>
   inc/article_admin.ecpp
 </%include>
 <%cpp>
-    } catch(const std::exception& er_art) {
-        log_error(er_art.what());
-    }
+       asp.commit();
+     } catch(const std::exception& er_art) {
+       log_error(er_art.what());
+     }
   }
 </%cpp>
 <%include>

@@ -69,12 +69,14 @@ try {
     for (vagra::Page::const_iterator it = pg.begin();
       it != pg.end(); it++) {
     try {
+      tnt::Savepoint csp(reply);
       vagra::CachedComment comment(*it, auth);
 </%cpp>
 <%include>
   inc/comment_admin.ecpp
 </%include>
 <%cpp>
+      csp.commit();
     } catch(const std::exception& er_art) {
         log_error(er_art.what());
     }
