@@ -26,51 +26,59 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 </%doc>
 <%pre>
-  #include <vagra/config.h>
-  #include <vagra/user/auth.h>
-  #include <vagra/user/cacheduser.h>
+  #include <tnt/savepoint.h>
+
+  #include <vagra/user/user.h>
 </%pre>
+<%cpp>
+  std::string title("Preview User");
+</%cpp>
+<%args>
+  unsigned int i_uid = 0;
+  std::string i_logname;
+  std::string i_dispname;
+</%args>
 <%session scope="global">
-  vagra::Auth auth;
-  std::string orig_query;
-  bool redirected = false;
-  bool cookies = false;
+  vagra::User user;
 </%session>
+<%include>
+  inc/header.ecpp
+  inc/auth.ecpp
+  inc/admin_menu.ecpp
+</%include>
 <%cpp>
-  if(!cookies) {
-    if(request.getQueryString() == "cookietest") {
-      request.clearSession();
-      reply.redirect("/error/nocookie");
-    }
-    orig_query = request.getQuery();
-    cookies = true;
-    reply.redirect("/admin/login?cookietest");
-  }  
-  if (!redirected && !auth) {
-    redirected = true;
-    reply.redirect("/admin/login");
-  }
-  if(auth) {
-    try {
-      tnt::Savepoint sp(reply);
-      vagra::CachedUser user(auth,auth);
+try {
+  tnt::Savepoint sp(reply);
+  if(i_uid)
+    user = vagra::User(i_uid, auth);
+  else
+    user.clear();
+
+  user->setLogname(i_logname);
+  user->setDispname(i_dispname);
+
+  if(!user->getLogname().empty()) {
 </%cpp>
-  <div id="auth_info"> 
-    <p>Logged in as <a href="/admin/user/update/<$ user->getLogname() $>"><$ user->getDispname() $></a>
-    | <a href="/admin/logout">Logout</a></p>
-  </div>
+    <h4>Submitted user data</h4>
+    <p>Logname: <$ user->getLogname() $></p>
+    <p>Dispname: <$ user->getDispname() $></p>
+    <form action="/admin/user/commit" method="get">
+      <div class="submit"><input type="submit" value="Commit" /></div>
+    </form>
 <%cpp>
-      sp.commit();
-    } catch(const std::exception& er_auth) {
-      log_error(er_auth.what());
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
-  }
-  else {
-    if(redirected && request.getQuery() != "/admin/login") {
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
   }
 </%cpp>
+    <h4>Modify user data</h4>
+<%include>
+  inc/user_form.ecpp
+</%include>
+<%cpp>
+  sp.commit();
+}
+catch(const std::exception& er_usr) {
+  log_error(er_usr.what());
+}
+</%cpp>
+<%include>
+  inc/footer.ecpp
+</%include>

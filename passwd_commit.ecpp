@@ -26,51 +26,62 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 </%doc>
 <%pre>
-  #include <vagra/config.h>
-  #include <vagra/user/auth.h>
-  #include <vagra/user/cacheduser.h>
+  #include <tnt/savepoint.h>
+
+  #include <vagra/user/user.h>
+  #include <vagra/passwd/passwd.h>
 </%pre>
+<%cpp>
+  std::string title("Commit Password");
+</%cpp>
 <%session scope="global">
-  vagra::Auth auth;
-  std::string orig_query;
-  bool redirected = false;
-  bool cookies = false;
+  vagra::User user;
+  vagra::Passwd passwd;
 </%session>
+<%include>
+  inc/header.ecpp
+  inc/auth.ecpp
+  inc/admin_menu.ecpp
+</%include>
 <%cpp>
-  if(!cookies) {
-    if(request.getQueryString() == "cookietest") {
-      request.clearSession();
-      reply.redirect("/error/nocookie");
+try {
+  tnt::Savepoint sp(reply);
+
+  if(user)
+  {
+    passwd.setOwner(user, auth);
+    if(passwd)
+      passwd.dbCommit(auth);
+    else
+    {
+      //FIXME: there is a realistic chance that users with add_level on 
+      // password but insufficient privileges on the user who should own
+      // the password, to create passwords that noone referes to. Need an
+      // additional BaseObject.chkWritePriv() which is not yet implemented.
+      // If implemented, there is still a little chance to create unrelated
+      // passwords, if the server dies or connection problems occur.
+      passwd.dbCommit(auth);
+      user.setPasswd(passwd);
+      user.dbCommit(auth);
     }
-    orig_query = request.getQuery();
-    cookies = true;
-    reply.redirect("/admin/login?cookietest");
-  }  
-  if (!redirected && !auth) {
-    redirected = true;
-    reply.redirect("/admin/login");
+    </%cpp>
+     <p>Password changed</p>
+    <%cpp>
+    user.clear();
+    passwd.clear();
   }
-  if(auth) {
-    try {
-      tnt::Savepoint sp(reply);
-      vagra::CachedUser user(auth,auth);
+  else
+  {
+    </%cpp>
+     <p class="warn">Invalid user!</p>
+    <%cpp>
+  }
+  sp.commit();
+}
+catch(const std::exception& er_pw) {
+  reply.out() << er_pw.what() << std::endl;
+}
 </%cpp>
-  <div id="auth_info"> 
-    <p>Logged in as <a href="/admin/user/update/<$ user->getLogname() $>"><$ user->getDispname() $></a>
-    | <a href="/admin/logout">Logout</a></p>
-  </div>
-<%cpp>
-      sp.commit();
-    } catch(const std::exception& er_auth) {
-      log_error(er_auth.what());
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
-  }
-  else {
-    if(redirected && request.getQuery() != "/admin/login") {
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
-  }
-</%cpp>
+<%include>
+  inc/footer.ecpp
+</%include>

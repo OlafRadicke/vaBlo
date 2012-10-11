@@ -269,7 +269,7 @@ p.warn {
 #pager {
 	text-align: center;
 	border-top-width: 0.1em;
-	border-bottom-width: 0em;
+	border-bottom-width: 0;
 	border-right-width: 0;
 	border-left-width: 0;
 	border-style: solid;
@@ -289,4 +289,22 @@ p.warn {
 
 #footer a {
 	color: #707070;
+}
+
+table.userlist {
+	border-collapse: collapse;
+}
+
+table.userlist tr.thead {
+	border-top-width: 0;
+	border-bottom-width: 0.1em;
+	border-right-width: 0;
+	border-left-width: 0;
+	border-style: solid;
+	border-color: #2d2626;
+}
+
+table.userlist th, td {
+	padding-left: 2em;
+	padding-right: 2em;
 }

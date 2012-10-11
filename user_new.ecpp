@@ -26,51 +26,34 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 </%doc>
 <%pre>
-  #include <vagra/config.h>
-  #include <vagra/user/auth.h>
-  #include <vagra/user/cacheduser.h>
+  #include <tnt/savepoint.h>
 </%pre>
-<%session scope="global">
-  vagra::Auth auth;
-  std::string orig_query;
-  bool redirected = false;
-  bool cookies = false;
-</%session>
 <%cpp>
-  if(!cookies) {
-    if(request.getQueryString() == "cookietest") {
-      request.clearSession();
-      reply.redirect("/error/nocookie");
-    }
-    orig_query = request.getQuery();
-    cookies = true;
-    reply.redirect("/admin/login?cookietest");
-  }  
-  if (!redirected && !auth) {
-    redirected = true;
-    reply.redirect("/admin/login");
-  }
-  if(auth) {
-    try {
-      tnt::Savepoint sp(reply);
-      vagra::CachedUser user(auth,auth);
+  std::string title("New User");
 </%cpp>
-  <div id="auth_info"> 
-    <p>Logged in as <a href="/admin/user/update/<$ user->getLogname() $>"><$ user->getDispname() $></a>
-    | <a href="/admin/logout">Logout</a></p>
-  </div>
+<%include>
+  inc/header.ecpp
+  inc/auth.ecpp
+  inc/admin_menu.ecpp
+</%include>
 <%cpp>
-      sp.commit();
-    } catch(const std::exception& er_auth) {
-      log_error(er_auth.what());
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
-  }
-  else {
-    if(redirected && request.getQuery() != "/admin/login") {
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
-  }
+try {
+  unsigned int i_uid = 0;
+  std::string i_logname;
+  std::string i_dispname;
+  tnt::Savepoint sp(reply);
 </%cpp>
+    <h4>Enter user data</h4>
+<%include>
+  inc/user_form.ecpp
+</%include>
+<%cpp>
+  sp.commit();
+}
+catch(const std::exception& er_usr) {
+  log_error(er_usr.what());
+}
+</%cpp>
+<%include>
+  inc/footer.ecpp
+</%include>

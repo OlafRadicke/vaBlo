@@ -26,51 +26,66 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 </%doc>
 <%pre>
-  #include <vagra/config.h>
-  #include <vagra/user/auth.h>
+  #include <tnt/savepoint.h>
+
+  #include <vagra/page.h>
+  #include <vagra/utils.h>
+  #include <vagra/cachedsearch.h>
   #include <vagra/user/cacheduser.h>
 </%pre>
-<%session scope="global">
-  vagra::Auth auth;
-  std::string orig_query;
-  bool redirected = false;
-  bool cookies = false;
-</%session>
 <%cpp>
-  if(!cookies) {
-    if(request.getQueryString() == "cookietest") {
-      request.clearSession();
-      reply.redirect("/error/nocookie");
-    }
-    orig_query = request.getQuery();
-    cookies = true;
-    reply.redirect("/admin/login?cookietest");
-  }  
-  if (!redirected && !auth) {
-    redirected = true;
-    reply.redirect("/admin/login");
-  }
-  if(auth) {
-    try {
-      tnt::Savepoint sp(reply);
-      vagra::CachedUser user(auth,auth);
+  std::string title("users");
+  std::string page_url("/admin/user/");
 </%cpp>
-  <div id="auth_info"> 
-    <p>Logged in as <a href="/admin/user/update/<$ user->getLogname() $>"><$ user->getDispname() $></a>
-    | <a href="/admin/logout">Logout</a></p>
-  </div>
+<%include>
+  inc/header.ecpp
+  inc/auth.ecpp
+  inc/admin_menu.ecpp
+</%include>
 <%cpp>
-      sp.commit();
-    } catch(const std::exception& er_auth) {
-      log_error(er_auth.what());
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
-  }
-  else {
-    if(redirected && request.getQuery() != "/admin/login") {
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
+try {
+  tnt::Savepoint sp(reply);
+
+  vagra::CachedSearch<vagra::User> search;
+  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getPathInfo()), 24);
+</%cpp>
+  <table class="userlist">
+    <tr class="thead">
+      <th>Id</th>
+      <th>Logname</th>
+      <th>Dispname</th>
+    </tr>
+<%cpp>
+  for (vagra::Page::const_iterator it = pg.begin();
+	it != pg.end(); it++)
+  try {
+    tnt::Savepoint usp(reply);
+    vagra::CachedUser user(*it);
+</%cpp>
+    <tr>
+      <td><$ user->getId() $></td>
+      <td><$ user->getLogname() $></td>
+      <td><$ user->getDispname() $></td>
+      <td><a href="/admin/user/update/<$ user->getLogname() $>">Modify</a></td>
+      <td><a href="/admin/passwd/update/<$ user->getLogname() $>">Change Password</a></td>
+    </tr>
+<%cpp>
+    usp.commit();
+  } catch(const std::exception& er_usr) {
+    log_error(er_usr.what());
   }
 </%cpp>
+  </table>
+<%include>
+  inc/pager.ecpp
+</%include>
+<%cpp>
+  sp.commit();
+}
+catch(const std::exception& er_usr) {
+  reply.out() << er_usr.what() << std::endl;
+}
+</%cpp>
+<%include>
+  inc/footer.ecpp
+</%include>

@@ -25,52 +25,13 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 </%doc>
-<%pre>
-  #include <vagra/config.h>
-  #include <vagra/user/auth.h>
-  #include <vagra/user/cacheduser.h>
-</%pre>
-<%session scope="global">
-  vagra::Auth auth;
-  std::string orig_query;
-  bool redirected = false;
-  bool cookies = false;
-</%session>
-<%cpp>
-  if(!cookies) {
-    if(request.getQueryString() == "cookietest") {
-      request.clearSession();
-      reply.redirect("/error/nocookie");
-    }
-    orig_query = request.getQuery();
-    cookies = true;
-    reply.redirect("/admin/login?cookietest");
-  }  
-  if (!redirected && !auth) {
-    redirected = true;
-    reply.redirect("/admin/login");
-  }
-  if(auth) {
-    try {
-      tnt::Savepoint sp(reply);
-      vagra::CachedUser user(auth,auth);
-</%cpp>
-  <div id="auth_info"> 
-    <p>Logged in as <a href="/admin/user/update/<$ user->getLogname() $>"><$ user->getDispname() $></a>
-    | <a href="/admin/logout">Logout</a></p>
-  </div>
-<%cpp>
-      sp.commit();
-    } catch(const std::exception& er_auth) {
-      log_error(er_auth.what());
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
-  }
-  else {
-    if(redirected && request.getQuery() != "/admin/login") {
-      request.clearSession();
-      reply.redirect("/error/nologin");
-    }
-  }
-</%cpp>
+  <form action="/admin/passwd/update/" method="post">
+    <fieldset>
+      <legend>Submit Password</legend>
+        <label for="pw_new">Password</label>
+          <input type="password" name="i_npasswd" id="pw_new" value="" />
+        <label for="pw_new">Verify Password</label>
+          <input type="password" name="i_vpasswd" id="pw_verify" value="" />
+      <div class="submit"><input type="submit" value="Submit" /></div>
+    </fieldset>
+  </form>

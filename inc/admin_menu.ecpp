@@ -32,8 +32,8 @@
   <div id="menu"> 
     <p>
       <a href="/admin/">Edit Article</a> <a href="/admin/article/new">New Article</a> |
-      <a href="/admin/user/">Edit User</a> <a href="/admin/user/new">New User</a> |
-      <a href="/admin/context">Edit Context</a> <a href="/admin/context/new">New Context</a>
+      <a href="/admin/user/">User List</a> <a href="/admin/user/new">New User</a> |
+      <a href="/admin/context/">Edit Context</a> <a href="/admin/context/new">New Context</a>
     </p>
   </div>
 <%cpp>
