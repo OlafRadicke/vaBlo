@@ -44,11 +44,23 @@
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
+  std::string pw;
 
   if(!user.getId())
+  {
     user.setContext("users", auth);
+    pw = user.setRandomPasswd(auth);
+  }
   user.dbCommit(auth);
-  reply.out() << "<p>committed</p>";
+</%cpp>
+  "<p>User <$ user.getDispname() $> committed</p>";
+<%cpp>
+  if(!pw.empty())
+  {
+  </%cpp>
+    <p>The generated password is <$ pw $></p>
+  <%cpp>
+  }
   sp.commit();
 }
 catch(const std::exception& er_comm) {

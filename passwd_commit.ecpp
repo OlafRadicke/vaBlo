@@ -49,24 +49,30 @@ try {
 
   if(user)
   {
-    passwd.setOwner(user, auth);
     if(passwd)
-      passwd.dbCommit(auth);
+    {
+
+      if(passwd.getId())
+      {
+        passwd.dbCommit(auth);
+      }
+      else
+      {
+        passwd.setContext("passwd", auth);
+        passwd.setOwner(user, auth);
+        user.setPasswd(passwd);
+        user.dbCommit(auth);
+      } 
+      </%cpp>
+       <p>Password changed</p>
+      <%cpp>
+    }
     else
     {
-      //FIXME: there is a realistic chance that users with add_level on 
-      // password but insufficient privileges on the user who should own
-      // the password, to create passwords that noone referes to. Need an
-      // additional BaseObject.chkWritePriv() which is not yet implemented.
-      // If implemented, there is still a little chance to create unrelated
-      // passwords, if the server dies or connection problems occur.
-      passwd.dbCommit(auth);
-      user.setPasswd(passwd);
-      user.dbCommit(auth);
-    }
-    </%cpp>
-     <p>Password changed</p>
-    <%cpp>
+      </%cpp>
+        <p>Invalid Password</p>
+      <%cpp>
+    } 
     user.clear();
     passwd.clear();
   }

@@ -44,18 +44,19 @@ try {
   vagra::User user(request.getPathInfo());
 
   if(user) {
-  unsigned int i_uid = user->getId();
-  std::string i_logname(user->getLogname());
-  std::string i_dispname(user->getDispname());
+  unsigned int i_uid = user.getId();
+  std::string i_logname(user.getLogname());
+  std::string i_dispname(user.getDispname());
 </%cpp>
     <h4>Current user data</h4>
-    <p>Logname: <$ user->getLogname() $></p>
-    <p>Dispname: <$ user->getDispname() $></p>
+    <p>Logname: <$ user.getLogname() $></p>
+    <p>Dispname: <$ user.getDispname() $></p>
 
     <h4>Modify user data</h4>
 <%include>
   inc/user_form.ecpp
 </%include>
+<p><a href="/admin/passwd/update/<$ user.getLogname() $>">Change Password</a></p>
 <%cpp>
   }
   sp.commit();
