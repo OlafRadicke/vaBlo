@@ -16,7 +16,7 @@ OBJECTS += user_list.o user_update.o user_new.o user_preview.o user_commit.o
 OBJECTS += passwd_update.o passwd_commit.o error.o expire.o login.o logout.o
 
 vablo.so: ${OBJECTS}
-	${CXX} -o $@ ${LDFLAGS} -Ltnt -lvagra -ltntnet $^
+	${CXX} -o $@ $^ ${LDFLAGS} -Ltnt -lvagra -ltntnet
 	[ -f tnt/vablo.so ] && rm tnt/vablo.so || true
 	cp vablo.so tnt/
 
