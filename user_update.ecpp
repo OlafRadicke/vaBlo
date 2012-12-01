@@ -41,7 +41,7 @@
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
-  vagra::User user(request.getPathInfo());
+  vagra::User user(request.getPathInfo(), auth);
 
   if(user) {
   unsigned int i_uid = user.getId();

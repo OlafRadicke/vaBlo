@@ -53,7 +53,7 @@ try {
   }
   user.dbCommit(auth);
 </%cpp>
-  "<p>User <$ user.getDispname() $> committed</p>";
+  <p>User <$ user.getDispname() $> committed</p>
 <%cpp>
   if(!pw.empty())
   {

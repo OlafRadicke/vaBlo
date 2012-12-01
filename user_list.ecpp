@@ -47,6 +47,7 @@ try {
   tnt::Savepoint sp(reply);
 
   vagra::CachedSearch<vagra::User> search;
+  search.setReadLevel(254); //find all
   vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getPathInfo()), 24);
 </%cpp>
   <table class="userlist">
@@ -60,7 +61,7 @@ try {
 	it != pg.end(); it++)
   try {
     tnt::Savepoint usp(reply);
-    vagra::CachedUser user(*it);
+    vagra::CachedUser user(*it, auth);
 </%cpp>
     <tr>
       <td><$ user->getId() $></td>
