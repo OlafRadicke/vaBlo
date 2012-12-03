@@ -234,11 +234,31 @@ fieldset {
 	margin-left: 2em;
 	width: 38.75em;
 	border-top-width: 0.1em;
-	border-bottom-width: 0em;
+	border-bottom-width: 0;
 	border-right-width: 0;
 	border-left-width: 0;
 	border-style: solid;
 	border-color: #2d2626;
+}
+
+fieldset.singlefield {
+	margin-bottom: 0;
+	margin-top: 0;
+	margin-left: 0;
+	border-top-width: 0;
+}
+
+input.txtbt {
+	text-decoration: underline;
+	color: #594f4f;
+	margin: 0;
+	border: 0;
+	background: transparent;
+}
+
+input.txtbt:active, input.txtbt:hover, input.txtbt:focus {
+	color: #846c6c;
+	cursor: pointer;
 }
 
 label {
@@ -292,10 +312,12 @@ p.warn {
 }
 
 table.userlist {
+	margin-top: 1em;
 	border-collapse: collapse;
 }
 
-table.userlist tr.thead {
+table.userlist tr.thead, caption {
+	text-align: left;
 	border-top-width: 0;
 	border-bottom-width: 0.1em;
 	border-right-width: 0;
@@ -305,6 +327,26 @@ table.userlist tr.thead {
 }
 
 table.userlist th, td {
+	padding-left: 2em;
+	padding-right: 2em;
+}
+
+table.ctxlist {
+	margin-top: 1em;
+	border-collapse: collapse;
+}
+
+table.ctxlist tr.thead, caption {
+	text-align: left;
+	border-top-width: 0;
+	border-bottom-width: 0.1em;
+	border-right-width: 0;
+	border-left-width: 0;
+	border-style: solid;
+	border-color: #2d2626;
+}
+
+table.ctxlist th, td {
 	padding-left: 2em;
 	padding-right: 2em;
 }

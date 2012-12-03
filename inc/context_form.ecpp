@@ -1,0 +1,192 @@
+<%doc>
+  Copyright (C) 2011 by Julian Wiesener
+  
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+  
+  As a special exception, you may use this file as part of a free
+  software library without restriction. Specifically, if other files
+  instantiate templates or use macros or inline functions from this
+  file, or you compile this file and link it with other files to
+  produce an executable, this file does not by itself cause the
+  resulting executable to be covered by the GNU General Public
+  License. This exception does not however invalidate any other
+  reasons why the executable file might be covered by the GNU Library
+  General Public License.
+  
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+</%doc>
+<%cpp>
+  char _read_level = context->getReadLevel();
+  char _add_level = context->getAddLevel();
+  char _write_level = context->getWriteLevel();
+
+  if(_read_level <= 2)
+    _read_level = 2;
+  else if(_read_level <= 8)
+    _read_level = 8;
+  else if(_read_level <= 14)
+    _read_level = 14;
+  else if(_read_level <= 30)
+    _read_level = 30;
+  else if(_read_level <= 62)
+    _read_level = 62;
+  else
+    _read_level = 126;
+  
+  if(_add_level <= 2)
+    _add_level = 2;
+  else if(_add_level <= 8)
+    _add_level = 8;
+  else if(_add_level <= 14)
+    _add_level = 14;
+  else if(_add_level <= 30)
+    _add_level = 30;
+  else if(_add_level <= 62)
+    _add_level = 62;
+  else
+    _add_level = 126;
+
+  if(_write_level <= 2)
+    _write_level = 2;
+  else if(_write_level <= 8)
+    _write_level = 8;
+  else if(_write_level <= 14)
+    _write_level = 14;
+  else if(_write_level <= 30)
+    _write_level = 30;
+  else if(_write_level <= 62)
+    _write_level = 62;
+  else
+    _write_level = 126;
+
+</%cpp>
+    <div class="context">
+      <h4>Context <$ context->getName() $></h4>
+      <table class="ctxlist">
+        <caption>Default object privilegs</caption>
+        <tr>
+          <td>ReadLevel</td>
+          <td>
+            <form action="/admin/context/preview" method="post">
+              <input type="hidden" name="i_type" value="new_read_level" />
+               <select name="i_value">
+                <option value="2" <$$ _read_level == 2 ? "selected=\"selected\" " : "" $>>Public</option>
+                <option value="8" <$$ _read_level == 8 ? "selected=\"selected\" " : "" $>>Users</option>
+                <option value="14" <$$ _read_level == 14 ? "selected=\"selected\" " : "" $>>Context unprivileged</option>
+                <option value="30" <$$ _read_level == 30 ? "selected=\"selected\" " : "" $>>Owner</option> 
+                <option value="62" <$$ _read_level == 62 ? "selected=\"selected\" " : "" $>>Context privileged</option> 
+                <option value="126" <$$ _read_level == 126 ? "selected=\"selected\" " : "" $>>Superuser</option> 
+               </select>
+              <input type="submit" value="update" />
+            </form>
+          </td>
+        </tr>
+        <tr>
+          <td>AddLevel</td>
+          <td>
+            <form action="/admin/context/preview" method="post">
+              <input type="hidden" name="i_type" value="new_add_level" />
+               <select name="i_value">
+                <option value="2" <$$ _add_level == 2 ? "selected=\"selected\" " : "" $>>Public</option>
+                <option value="8" <$$ _add_level == 8 ? "selected=\"selected\" " : "" $>>Users</option>
+                <option value="14" <$$ _add_level == 14 ? "selected=\"selected\" " : "" $>>Context unprivileged</option>
+                <option value="30" <$$ _add_level == 30 ? "selected=\"selected\" " : "" $>>Owner</option> 
+                <option value="62" <$$ _add_level == 62 ? "selected=\"selected\" " : "" $>>Context privileged</option> 
+                <option value="126" <$$ _add_level == 126 ? "selected=\"selected\" " : "" $>>Superuser</option> 
+               </select>
+              <input type="submit" value="update" />
+            </form>
+          </td>
+        </tr>
+        <tr>
+          <td>WriteLevel</td>
+          <td>
+            <form action="/admin/context/preview" method="post">
+              <input type="hidden" name="i_type" value="new_write_level" />
+               <select name="i_value">
+                <option value="2" <$$ _write_level == 2 ? "selected=\"selected\" " : "" $>>Public</option>
+                <option value="8" <$$ _write_level == 8 ? "selected=\"selected\" " : "" $>>Users</option>
+                <option value="14" <$$ _write_level == 14 ? "selected=\"selected\" " : "" $>>Context unprivileged</option>
+                <option value="30" <$$ _write_level == 30 ? "selected=\"selected\" " : "" $>>Owner</option> 
+                <option value="62" <$$ _write_level == 62 ? "selected=\"selected\" " : "" $>>Context privileged</option> 
+                <option value="126" <$$ _write_level == 126 ? "selected=\"selected\" " : "" $>>Superuser</option> 
+               </select>
+              <input type="submit" value="update" />
+            </form>
+          </td>
+        </tr>
+      </table>
+      <table class="userlist">
+        <caption>Unprivileged users</caption>
+%	const std::vector<unsigned int>& unprivileged = context->getUnprivileged();
+%	std::string i_type("rem_unprivileged");
+%	for(std::vector<unsigned int>::const_iterator user_iter = unprivileged.begin();
+%	    user_iter != unprivileged.end(); user_iter++) {
+<%include>
+  inc/user_row.ecpp
+</%include>
+%	}
+      </table>
+      <p>
+        <form action="/admin/context/preview" method="post">
+          <fieldset class="singlefield">
+           <legend>Add unprivileged</legend>
+           <input type="hidden" name="i_type" value="add_unprivileged" />
+           <input type="text" name="i_value" value="" />
+           <input type="submit" value="Add" />
+          </fieldset>
+        </form>
+      </p>
+      <table class="userlist">
+        <caption>Privileged users</caption>
+%	const std::vector<unsigned int>& privileged = context->getPrivileged();
+%       i_type = "rem_privileged";
+%	for(std::vector<unsigned int>::const_iterator user_iter = privileged.begin();
+%	    user_iter != privileged.end(); user_iter++) {
+<%include>
+  inc/user_row.ecpp
+</%include>
+%	}
+      </table>
+      <p>
+        <form action="/admin/context/preview" method="post">
+          <fieldset class="singlefield">
+           <legend>Add privileged</legend>
+           <input type="hidden" name="i_type" value="add_privileged" />
+           <input type="text" name="i_value" value="" />
+           <input type="submit" value="Add" />
+          </fieldset>
+        </form>
+      </p>
+      <table class="userlist">
+        <caption>Context admins</caption>
+%	const std::vector<unsigned int>& admin = context->getAdmin();
+%       i_type = "rem_admin";
+%	for(std::vector<unsigned int>::const_iterator user_iter = admin.begin();
+%	    user_iter != admin.end(); user_iter++) {
+<%include>
+  inc/user_row.ecpp
+</%include>
+%	}
+      </table>
+      <p>
+        <form action="/admin/context/preview" method="post">
+          <fieldset class="singlefield">
+           <legend>Add context admin</legend>
+           <input type="hidden" name="i_type" value="add_admin" />
+           <input type="text" name="i_value" value="" />
+           <input type="submit" value="Add" />
+          </fieldset>
+        </form>
+      </p>
+    </div>

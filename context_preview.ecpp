@@ -1,0 +1,104 @@
+<%doc>
+  Copyright (C) 2012 by Julian Wiesener
+  
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+  
+  As a special exception, you may use this file as part of a free
+  software library without restriction. Specifically, if other files
+  instantiate templates or use macros or inline functions from this
+  file, or you compile this file and link it with other files to
+  produce an executable, this file does not by itself cause the
+  resulting executable to be covered by the GNU General Public
+  License. This exception does not however invalidate any other
+  reasons why the executable file might be covered by the GNU Library
+  General Public License.
+  
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+</%doc>
+<%pre>
+  #include <tnt/savepoint.h>
+
+  #include <vagra/context.h>
+  #include <vagra/utils.h>
+  #include <vagra/user/user.h>
+</%pre>
+<%cpp>
+  std::string title("Preview Context");
+</%cpp>
+<%args>
+  std::string i_type;
+  std::string i_value;
+</%args>
+<%session scope="global">
+  vagra::Context context;
+</%session>
+<%include>
+  inc/header.ecpp
+  inc/auth.ecpp
+  inc/admin_menu.ecpp
+</%include>
+<%cpp>
+try {
+  tnt::Savepoint sp(reply);
+  try {
+    tnt::Savepoint csp(reply);
+    if(i_type == "new_read_level") {
+      context->setReadLevel(vagra::str2unsigned(i_value), auth);
+    } else if(i_type == "new_add_level") {
+      context->setAddLevel(vagra::str2unsigned(i_value), auth);
+    } else if(i_type == "new_write_level") {
+      context->setWriteLevel(vagra::str2unsigned(i_value), auth);
+    } else if(i_type == "rem_unprivileged") {
+      vagra::User user(i_value, auth);
+      context->removeUnprivileged(user, auth);
+    } else if(i_type == "rem_privileged") {
+      vagra::User user(i_value, auth);
+      context->removePrivileged(user, auth);
+    } else if(i_type == "rem_admin") {
+      vagra::User user(i_value, auth);
+      context->removeAdmin(user, auth);
+    } else if(i_type == "add_unprivileged") {
+      vagra::User user(i_value, auth);
+      context->addUnprivileged(user, auth);
+    } else if(i_type == "add_privileged") {
+      vagra::User user(i_value, auth);
+      context->addPrivileged(user, auth);
+    } else if(i_type == "add_admin") {
+      vagra::User user(i_value, auth);
+      context->addAdmin(user, auth);
+    }
+    csp.commit();
+  }
+  catch(const std::exception& er_ctx) {
+    reply.out() << er_ctx.what() << std::endl;
+  }
+
+  if(context) {
+</%cpp>
+<%include>
+  inc/context_form.ecpp
+</%include>
+  <form action="/admin/context/commit" method="get">
+    <div class="submit"><input type="submit" value="Commit" /></div>
+  </form>
+<%cpp>
+  }
+  sp.commit();
+}
+catch(const std::exception& er_ctx) {
+  log_error(er_ctx.what());
+}
+</%cpp>
+<%include>
+  inc/footer.ecpp
+</%include>

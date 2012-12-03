@@ -14,6 +14,7 @@ OBJECTS += article_new.o article_preview.o article_commit.o article_update.o
 OBJECTS += admin.o admin_comments.o comment_update.o comment_update_commit.o
 OBJECTS += user_list.o user_update.o user_new.o user_preview.o user_commit.o
 OBJECTS += passwd_update.o passwd_commit.o error.o expire.o login.o logout.o
+OBJECTS += context_list.o context_update.o context_preview.o context_commit.o context_new.o
 
 vablo.so: ${OBJECTS}
 	${CXX} -o $@ $^ ${LDFLAGS} -Ltnt -lvagra -ltntnet
