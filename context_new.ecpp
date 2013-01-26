@@ -55,7 +55,7 @@ try {
   <form action="/admin/context/new" method="post">
     <fieldset>
       <legend>Add Context</legend>
-      <label for="name">Logname</label>
+      <label for="name">Context name</label>
         <input type="text" name="i_name" id="name" value="" />
       <input type="submit" value="Continue" /></div>
     </fieldset>
