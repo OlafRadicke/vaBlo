@@ -26,7 +26,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 </%doc>
 <%pre>
-#include <vagra/article/tagsumpublic.h>
+#include <vagra/article/tagsum.h>
 #include <vagra/config.h>
 </%pre>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -49,8 +49,8 @@
   <%cpp>
     try {
       tnt::Savepoint sp(reply);
-      vagra::ArticleTagsPublic tagsum;
-      for (vagra::ArticleTagsPublic::const_iterator it = tagsum.begin(); it != tagsum.end(); it++)
+      vagra::ArticleTags tagsum;
+      for (vagra::ArticleTags::const_iterator it = tagsum.begin(); it != tagsum.end(); it++)
       {
   </%cpp>
         <a href="/categories/<$ it->first $>"><$ it->first $>(<$ it->second $>)</a>

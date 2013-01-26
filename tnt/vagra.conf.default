@@ -22,6 +22,7 @@ cache_size		= 128
 
 [article]
 #article module specific settings
+tagsum_context		= blog
 tagsum_size             = 16
 
 
