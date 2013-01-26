@@ -72,121 +72,127 @@
 </%cpp>
     <div class="context">
       <h4>Context <$ context->getName() $></h4>
-      <table class="ctxlist">
-        <caption>Default object privilegs</caption>
-        <tr>
-          <td>ReadLevel</td>
-          <td>
-            <form action="/admin/context/preview" method="post">
-              <input type="hidden" name="i_type" value="new_read_level" />
-               <select name="i_value">
+      <form action="/admin/context/preview" method="post">
+        <table class="ctxlist">
+          <caption>Default object privilegs</caption>
+          <tr>
+            <td>ReadLevel</td>
+            <td>
+              <input type="hidden" name="i_type" value="update_privs" />
+              <select name="i_readlevel">
                 <option value="2" <$$ _read_level == 2 ? "selected=\"selected\" " : "" $>>Public</option>
                 <option value="8" <$$ _read_level == 8 ? "selected=\"selected\" " : "" $>>Users</option>
                 <option value="14" <$$ _read_level == 14 ? "selected=\"selected\" " : "" $>>Context unprivileged</option>
                 <option value="30" <$$ _read_level == 30 ? "selected=\"selected\" " : "" $>>Owner</option> 
                 <option value="62" <$$ _read_level == 62 ? "selected=\"selected\" " : "" $>>Context privileged</option> 
                 <option value="126" <$$ _read_level == 126 ? "selected=\"selected\" " : "" $>>Superuser</option> 
-               </select>
-              <input type="submit" value="update" />
-            </form>
-          </td>
-        </tr>
-        <tr>
-          <td>AddLevel</td>
-          <td>
-            <form action="/admin/context/preview" method="post">
-              <input type="hidden" name="i_type" value="new_add_level" />
-               <select name="i_value">
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>AddLevel</td>
+            <td>
+              <input type="hidden" name="i_type" value="update_privs" />
+              <select name="i_addlevel">
                 <option value="2" <$$ _add_level == 2 ? "selected=\"selected\" " : "" $>>Public</option>
                 <option value="8" <$$ _add_level == 8 ? "selected=\"selected\" " : "" $>>Users</option>
                 <option value="14" <$$ _add_level == 14 ? "selected=\"selected\" " : "" $>>Context unprivileged</option>
                 <option value="30" <$$ _add_level == 30 ? "selected=\"selected\" " : "" $>>Owner</option> 
                 <option value="62" <$$ _add_level == 62 ? "selected=\"selected\" " : "" $>>Context privileged</option> 
                 <option value="126" <$$ _add_level == 126 ? "selected=\"selected\" " : "" $>>Superuser</option> 
-               </select>
-              <input type="submit" value="update" />
-            </form>
-          </td>
-        </tr>
-        <tr>
-          <td>WriteLevel</td>
-          <td>
-            <form action="/admin/context/preview" method="post">
-              <input type="hidden" name="i_type" value="new_write_level" />
-               <select name="i_value">
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>WriteLevel</td>
+            <td>
+              <input type="hidden" name="i_type" value="update_privs" />
+              <select name="i_writelevel">
                 <option value="2" <$$ _write_level == 2 ? "selected=\"selected\" " : "" $>>Public</option>
                 <option value="8" <$$ _write_level == 8 ? "selected=\"selected\" " : "" $>>Users</option>
                 <option value="14" <$$ _write_level == 14 ? "selected=\"selected\" " : "" $>>Context unprivileged</option>
                 <option value="30" <$$ _write_level == 30 ? "selected=\"selected\" " : "" $>>Owner</option> 
                 <option value="62" <$$ _write_level == 62 ? "selected=\"selected\" " : "" $>>Context privileged</option> 
                 <option value="126" <$$ _write_level == 126 ? "selected=\"selected\" " : "" $>>Superuser</option> 
-               </select>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            </td>
+            <td>
               <input type="submit" value="update" />
-            </form>
-          </td>
-        </tr>
-      </table>
-      <table class="userlist">
-        <caption>Unprivileged users</caption>
-%	const std::vector<unsigned int>& unprivileged = context->getUnprivileged();
-%	std::string i_type("rem_unprivileged");
-%	for(std::vector<unsigned int>::const_iterator user_iter = unprivileged.begin();
-%	    user_iter != unprivileged.end(); user_iter++) {
+            </td>
+          </tr>
+        </table>
+      </form>
+      <form action="/admin/context/preview" method="post">
+        <table class="userlist">
+          <caption>Unprivileged users</caption>
+%	  const std::vector<unsigned int>& unprivileged = context->getUnprivileged();
+%         if(unprivileged.empty())
+	    <tr><td>none</td></tr>
+%         std::string i_type("rem_unprivileged");
+%	  for(std::vector<unsigned int>::const_iterator user_iter = unprivileged.begin();
+%	      user_iter != unprivileged.end(); user_iter++) {
 <%include>
   inc/user_row.ecpp
 </%include>
 %	}
-      </table>
-      <p>
-        <form action="/admin/context/preview" method="post">
-          <fieldset class="singlefield">
-           <legend>Add unprivileged</legend>
-           <input type="hidden" name="i_type" value="add_unprivileged" />
-           <input type="text" name="i_value" value="" />
-           <input type="submit" value="Add" />
-          </fieldset>
-        </form>
-      </p>
-      <table class="userlist">
-        <caption>Privileged users</caption>
-%	const std::vector<unsigned int>& privileged = context->getPrivileged();
-%       i_type = "rem_privileged";
-%	for(std::vector<unsigned int>::const_iterator user_iter = privileged.begin();
-%	    user_iter != privileged.end(); user_iter++) {
+        </table>
+      </form>
+      <form action="/admin/context/preview" method="post">
+        <fieldset class="singlefield">
+         <legend>Add unprivileged</legend>
+         <input type="hidden" name="i_type" value="add_unprivileged" />
+         <input type="text" name="i_value" value="" />
+         <input type="submit" value="Add" />
+        </fieldset>
+      </form>
+      <form action="/admin/context/preview" method="post">
+        <table class="userlist">
+          <caption>Privileged users</caption>
+%         const std::vector<unsigned int>& privileged = context->getPrivileged();
+%	  if(privileged.empty())
+	    <tr><td>none</td></tr>
+%         i_type = "rem_privileged";
+%	  for(std::vector<unsigned int>::const_iterator user_iter = privileged.begin();
+%	      user_iter != privileged.end(); user_iter++) {
 <%include>
   inc/user_row.ecpp
 </%include>
 %	}
-      </table>
-      <p>
-        <form action="/admin/context/preview" method="post">
-          <fieldset class="singlefield">
-           <legend>Add privileged</legend>
-           <input type="hidden" name="i_type" value="add_privileged" />
-           <input type="text" name="i_value" value="" />
-           <input type="submit" value="Add" />
-          </fieldset>
-        </form>
-      </p>
-      <table class="userlist">
-        <caption>Context admins</caption>
-%	const std::vector<unsigned int>& admin = context->getAdmin();
-%       i_type = "rem_admin";
-%	for(std::vector<unsigned int>::const_iterator user_iter = admin.begin();
-%	    user_iter != admin.end(); user_iter++) {
+        </table>
+      </form>
+      <form action="/admin/context/preview" method="post">
+        <fieldset class="singlefield">
+         <legend>Add privileged</legend>
+         <input type="hidden" name="i_type" value="add_privileged" />
+         <input type="text" name="i_value" value="" />
+         <input type="submit" value="Add" />
+        </fieldset>
+      </form>
+      <form action="/admin/context/preview" method="post">
+        <table class="userlist">
+          <caption>Context admins</caption>
+%	  const std::vector<unsigned int>& admin = context->getAdmin();
+%         if(admin.empty())
+	    <tr><td>none</td></tr>
+%         i_type = "rem_admin";
+%         for(std::vector<unsigned int>::const_iterator user_iter = admin.begin();
+%	      user_iter != admin.end(); user_iter++) {
 <%include>
   inc/user_row.ecpp
 </%include>
 %	}
-      </table>
-      <p>
-        <form action="/admin/context/preview" method="post">
-          <fieldset class="singlefield">
-           <legend>Add context admin</legend>
-           <input type="hidden" name="i_type" value="add_admin" />
-           <input type="text" name="i_value" value="" />
-           <input type="submit" value="Add" />
-          </fieldset>
-        </form>
-      </p>
+        </table>
+      </form>
+      <form action="/admin/context/preview" method="post">
+        <fieldset class="singlefield">
+         <legend>Add context admin</legend>
+         <input type="hidden" name="i_type" value="add_admin" />
+         <input type="text" name="i_value" value="" />
+         <input type="submit" value="Add" />
+        </fieldset>
+      </form>
     </div>

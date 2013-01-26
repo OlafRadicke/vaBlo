@@ -38,11 +38,9 @@
             <tr>
 	      <td><a href="/admin/user/<$ user->getLogname() $>"><$ user->getDispname() $></a></td>
 	      <td>
-                <form action="/admin/context/preview" method="post">
-                  <input type="hidden" name="i_type" value="<$ i_type $>" />
-                  <input type="hidden" name="i_value" value="<$ user->getLogname() $>" />
-                  <input type="submit" value="remove" class="txtbt" />
-                </form>
+                <input type="hidden" name="i_type" value="<$ i_type $>" />
+                <input type="hidden" name="i_value" value="<$ user->getLogname() $>" />
+                <input type="submit" value="remove" class="txtbt" />
               </td>
             </tr>
 <%cpp>

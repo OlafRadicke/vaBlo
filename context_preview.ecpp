@@ -38,6 +38,9 @@
 <%args>
   std::string i_type;
   std::string i_value;
+  std::string i_readlevel;
+  std::string i_addlevel;
+  std::string i_writelevel;
 </%args>
 <%session scope="global">
   vagra::Context context;
@@ -52,12 +55,10 @@ try {
   tnt::Savepoint sp(reply);
   try {
     tnt::Savepoint csp(reply);
-    if(i_type == "new_read_level") {
-      context->setReadLevel(vagra::str2unsigned(i_value), auth);
-    } else if(i_type == "new_add_level") {
-      context->setAddLevel(vagra::str2unsigned(i_value), auth);
-    } else if(i_type == "new_write_level") {
-      context->setWriteLevel(vagra::str2unsigned(i_value), auth);
+    if(i_type == "update_privs") {
+      context->setReadLevel(vagra::str2unsigned(i_readlevel), auth);
+      context->setAddLevel(vagra::str2unsigned(i_addlevel), auth);
+      context->setWriteLevel(vagra::str2unsigned(i_writelevel), auth);
     } else if(i_type == "rem_unprivileged") {
       vagra::User user(i_value, auth);
       context->removeUnprivileged(user, auth);
