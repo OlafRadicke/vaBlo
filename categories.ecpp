@@ -36,8 +36,9 @@
 </%pre>
 <%cpp>
   std::string title(vagra::getConfig("vablo", "site_name"));
-  std::string path_info = request.getPathInfo();
-  std::string page_url("/categories/" + path_info + "/");
+  std::string search_context = request.getPathInfo();
+  std::string search_category = request.getArgDef(0,"");
+  std::string page_url("/categories/" + search_category + "/");
 </%cpp>
 <%include>
   inc/header.ecpp
@@ -48,10 +49,10 @@ try {
 
   vagra::CachedSearch<vagra::Article, vagra::ArticleTagSearch> search;
   search.setOrderAsc(false);
-  search.setContext("public");
-  search.setTag(path_info);
+  search.setContext(search_context);
+  search.setTag(search_category);
 
-  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getArgDef(0,"1")));
+  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getArgDef(1,"1")));
 
   for (vagra::Page::const_iterator it = pg.begin();
        it != pg.end(); it++)

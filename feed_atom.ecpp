@@ -45,7 +45,7 @@ try {
 
   vagra::CachedSearch<vagra::Article> search;
   search.setOrderAsc(false);
-  search.setContext("public");
+  search.setContext(request.getPathInfo());
 
 </%cpp>
 <%include>

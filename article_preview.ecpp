@@ -36,6 +36,7 @@
 <%args>
   unsigned int i_art_id = 0;
   unsigned int i_readlevel = 8;
+  unsigned int i_context = 1;
   std::string i_title;
   std::string i_name;
   std::string i_head;
@@ -66,8 +67,7 @@ try {
   article.setAbstract(i_abstract);
   article.setText(i_text);
   article.setTags(i_tags);
-  if(!article.getContext()->getId())
-    article.setContext("public", auth);
+  article.setContext(i_context, auth);
   article.setReadLevel(i_readlevel, auth);
 
   if(article) {

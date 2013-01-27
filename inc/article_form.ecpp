@@ -25,6 +25,15 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 </%doc>
+<%pre>
+  #include <vagra/cachedsearch.h>
+  #include <vagra/cachedcontext.h>
+</%pre>
+<%cpp>
+  vagra::CachedSearch<vagra::Context> search;
+  search.setReadLevel(254); //find all
+  std::vector<unsigned int> results(search.getResults());
+</%cpp>
   <form action="/admin/article/preview" method="post">
     <fieldset>
       <legend>Submit Article</legend>
@@ -49,6 +58,17 @@
           <option value="8" <$$ i_readlevel == 8 ? "selected=\"selected\" " : "" $>>Users</option>
           <option value="14" <$$ i_readlevel == 14 ? "selected=\"selected\" " : "" $>>Context member</option>
           <option value="30" <$$ i_readlevel == 30 ? "selected=\"selected\" " : "" $>>Privileged and owner</option>
+        </select>
+      <label for="fl_context">Context</label>
+	<select name="i_context" id="fl_context">
+%       for(std::vector<unsigned int>::const_iterator it = results.begin(); it != results.end(); it++) {
+%         try {
+%         vagra::CachedContext ctx(*it, auth);
+          <option value="<$ ctx->getId() $>" <$$ i_context == ctx->getId() ? "selected=\"selected\" " : "" $>><$ ctx->getName() $></option>
+%         } catch(const std::exception& er_ctx) {
+%           log_error(er_ctx.what());
+%         }
+%       }
         </select>
       <div class="fl_submit"><input type="submit" value="Preview" /></div>
     </fieldset>

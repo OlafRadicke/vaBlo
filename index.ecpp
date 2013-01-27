@@ -47,9 +47,9 @@ try {
 
   vagra::CachedSearch<vagra::Article> search;
   search.setOrderAsc(false);
-  search.setContext("public");
+  search.setContext(request.getPathInfo());
 
-  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getPathInfo()));
+  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getArgDef(0,"1")));
 
   for (vagra::Page::const_iterator it = pg.begin();
 	it != pg.end(); it++)
