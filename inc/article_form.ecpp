@@ -63,8 +63,10 @@
 	<select name="i_context" id="fl_context">
 %       for(std::vector<unsigned int>::const_iterator it = results.begin(); it != results.end(); it++) {
 %         try {
-%         vagra::CachedContext ctx(*it, auth);
+%           tnt::Savepoint csp(reply);
+%           vagra::CachedContext ctx(*it, auth);
           <option value="<$ ctx->getId() $>" <$$ i_context == ctx->getId() ? "selected=\"selected\" " : "" $>><$ ctx->getName() $></option>
+%           csp.commit();
 %         } catch(const std::exception& er_ctx) {
 %           log_error(er_ctx.what());
 %         }
