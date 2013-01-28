@@ -30,6 +30,7 @@
 
   #include <vagra/user/user.h>
   #include <vagra/passwd/passwd.h>
+  #include <vagra/exception.h>
 </%pre>
 <%cpp>
   std::string title("Commit Password");
@@ -84,8 +85,11 @@ try {
   }
   sp.commit();
 }
-catch(const std::exception& er_pw) {
+catch(const vagra::Exception& er_pw) {
   reply.out() << er_pw.what() << std::endl;
+}
+catch(const std::exception& er_pw) {
+  log_error(er_pw.what());
 }
 </%cpp>
 <%include>

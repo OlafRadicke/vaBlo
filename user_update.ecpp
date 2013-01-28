@@ -29,6 +29,7 @@
   #include <tnt/savepoint.h>
 
   #include <vagra/user/user.h>
+  #include <vagra/exception.h>
 </%pre>
 <%cpp>
   std::string title("Update User");
@@ -60,6 +61,9 @@ try {
 <%cpp>
   }
   sp.commit();
+}
+catch(const vagra::Exception& er_usr) {
+  reply.out() << er_usr.what() << std::endl;
 }
 catch(const std::exception& er_usr) {
   log_error(er_usr.what());

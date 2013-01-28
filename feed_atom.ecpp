@@ -78,7 +78,7 @@ try {
 <%cpp>
   sp.commit();
 }
-catch(const std::exception& er_comm) {
-	reply.out() << er_comm.what() << std::endl;
+catch(const std::exception& er_feed) {
+	log_error(er_feed.what());
 }
 </%cpp>

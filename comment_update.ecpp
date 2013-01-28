@@ -30,6 +30,7 @@
 
   #include <vagra/article/cachedarticle.h>
   #include <vagra/comment/comment.h>
+  #include <vagra/exception.h>
   #include <vagra/utils.h>
 </%pre>
 <%cpp>
@@ -94,8 +95,11 @@ try {
 <%cpp>
   sp.commit();
 }
-catch(const std::exception& er_comm) {
+catch(const vagra::Exception& er_comm) {
   reply.out() << er_comm.what() << std::endl;
+}
+catch(const std::exception& er_comm) {
+  log_error(er_comm.what());
 }
 </%cpp>
 <%include>

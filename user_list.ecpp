@@ -28,6 +28,7 @@
 <%pre>
   #include <tnt/savepoint.h>
 
+  #include <vagra/exception.h>
   #include <vagra/page.h>
   #include <vagra/utils.h>
   #include <vagra/cachedsearch.h>
@@ -83,8 +84,11 @@ try {
 <%cpp>
   sp.commit();
 }
-catch(const std::exception& er_usr) {
+catch(const vagra::Exception& er_usr) {
   reply.out() << er_usr.what() << std::endl;
+}
+catch(const std::exception& er_usr) {
+  log_error(er_usr.what());
 }
 </%cpp>
 <%include>
