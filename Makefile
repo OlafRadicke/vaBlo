@@ -22,7 +22,6 @@ vablo.so: ${OBJECTS}
 	cp vablo.so tnt/
 
 .SUFFIXES: .ecpp .gif .jpg .css .js .cpp .ico
-EXTRA_ENV+="PATH=$$PATH:/opt/gsd/bin"
 ECPPC=env ${EXTRA_ENV} ecppc
 TNTNET=env ${EXTRA_ENV} tntnet
 CXXFLAGS  = -Ivagra/include $(VAGRA_CXXFLAGS)
