@@ -45,7 +45,7 @@ try {
 
   vagra::CachedSearch<vagra::Article> search;
   search.setOrderAsc(false);
-  search.setContext(request.getPathInfo());
+  search.setContext(request.getArg("context","default"));
 
 </%cpp>
 <%include>
@@ -53,7 +53,7 @@ try {
 </%include>
 <%cpp>
 
-  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getPathInfo()));
+  vagra::Page pg(search.getResults(), 1);
 
   for (vagra::Page::const_iterator it = pg.begin();
 	it != pg.end(); it++)

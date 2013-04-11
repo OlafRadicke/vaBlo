@@ -37,8 +37,8 @@
 </%pre>
 <%cpp>
   std::string title(vagra::getConfig("vablo", "site_name"));
-  std::string search_context = request.getPathInfo();
-  std::string search_category = request.getArgDef(0,"");
+  std::string search_context = request.getArg("context","default");
+  std::string search_category = request.getArg("category");
   std::string page_url("/categories/" + search_category + "/");
 </%cpp>
 <%include>
@@ -53,7 +53,7 @@ try {
   search.setContext(search_context);
   search.setTag(search_category);
 
-  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getArgDef(1,"1")));
+  vagra::Page pg(search.getResults(), vagra::str2Pagenum(request.getArg("pagenum","1")));
 
   for (vagra::Page::const_iterator it = pg.begin();
        it != pg.end(); it++)

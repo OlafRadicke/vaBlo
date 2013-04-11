@@ -35,7 +35,7 @@
   #include <vagra/utils.h>
 </%pre>
 <%cpp>
-  std::string title(request.getPathInfo());
+  std::string title(request.getArg("article"));
   std::string page_url("/admin/comments/" + title + "/");
   std::string i_name;
   std::string i_mail;
@@ -63,7 +63,7 @@ try {
   if(i_art_id) {
     if(article->getCommentAmount()) {  
       vagra::Page pg(article->getCommentIds(), 
-      vagra::str2Pagenum(request.getArgDef(0,"1")));
+      vagra::str2Pagenum(request.getArg("pagenum","1")));
 </%cpp>
   <h4 id="comments">Comments</h4>
 <%cpp>
