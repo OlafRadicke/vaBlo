@@ -228,11 +228,11 @@
   <listeners>
     <listener>
       <ip>0.0.0.0</ip>
-      <port>8080</port>
+      <port>8000</port>
     </listener>
     <listener>
       <ip>::</ip>
-      <port>8080</port>
+      <port>8000</port>
     </listener>
     <listener>
       <ip>0.0.0.0</ip>
