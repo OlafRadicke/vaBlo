@@ -38,9 +38,9 @@
   std::string i_logname;
   std::string i_dispname;
 </%args>
-<%session scope="global">
+<%securesession scope="global">
   vagra::User user;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp

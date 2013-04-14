@@ -38,10 +38,10 @@
   std::string i_npasswd;
   std::string i_vpasswd;
 </%args>
-<%session scope="global">
+<%securesession scope="global">
   vagra::User user;
   vagra::Passwd passwd;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp

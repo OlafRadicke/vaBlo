@@ -45,9 +45,9 @@
   std::string i_text;
   std::string i_tags;
 </%args>
-<%session scope="global">
+<%securesession scope="global">
   vagra::Article article;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp

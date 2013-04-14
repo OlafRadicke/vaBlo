@@ -33,9 +33,9 @@
 <%cpp>
   std::string title("Update Context");
 </%cpp>
-<%session scope="global">
+<%securesession scope="global">
   vagra::Context context;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp

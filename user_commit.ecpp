@@ -34,9 +34,9 @@
 <%cpp>
   std::string title("User Commit");
 </%cpp>
-<%session scope="global">
+<%securesession scope="global">
   vagra::User user;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp

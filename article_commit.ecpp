@@ -34,9 +34,9 @@
 <%cpp>
   std::string title("Article committed");
 </%cpp>
-<%session scope="global">
+<%securesession scope="global">
   vagra::Article article;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp 

@@ -43,9 +43,9 @@
   std::string i_addlevel;
   std::string i_writelevel;
 </%args>
-<%session scope="global">
+<%securesession scope="global">
   vagra::Context context;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp

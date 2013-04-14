@@ -46,9 +46,9 @@
   unsigned int i_ref_id = 0;
   unsigned int i_comm_id = 0;
 </%args>
-<%session scope="global">
+<%securesession scope="global">
   vagra::Comment comment;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp

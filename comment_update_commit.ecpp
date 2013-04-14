@@ -35,9 +35,9 @@
 <%cpp>
   std::string title("Comment updated");
 </%cpp>
-<%session scope="global">
+<%securesession scope="global">
   vagra::Comment comment;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp

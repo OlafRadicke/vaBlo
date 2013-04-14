@@ -30,12 +30,12 @@
   #include <vagra/user/auth.h>
   #include <vagra/user/cacheduser.h>
 </%pre>
-<%session scope="global">
+<%securesession scope="global">
   vagra::Auth auth;
   std::string orig_query;
   bool redirected = false;
   bool cookies = false;
-</%session>
+</%securesession>
 <%cpp>
   if(!cookies) {
     if(request.getQueryString() == "cookietest") {

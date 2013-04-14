@@ -35,10 +35,10 @@
 <%cpp>
   std::string title("Commit Password");
 </%cpp>
-<%session scope="global">
+<%securesession scope="global">
   vagra::User user;
   vagra::Passwd passwd;
-</%session>
+</%securesession>
 <%include>
   inc/header.ecpp
   inc/auth.ecpp
