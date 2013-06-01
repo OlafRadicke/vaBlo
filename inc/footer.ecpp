@@ -31,7 +31,9 @@
      </div>
    </div>
    <div id="footer">
-     <p>Served by <a href="http://www.tntnet.org/">tntnet</a> using <a href="http://www.vtoc.de/projects/vablo">vaBlo 0.3</a></p>
+<%include>
+  inc/custom_footer.ecpp
+</%include>
    </div>
  </body>
 </html>

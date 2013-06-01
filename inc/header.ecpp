@@ -43,8 +43,17 @@
     <div id="head">
 	    <h1><a href="/"><$ vagra::getConfig("vablo", "site_name") $></a></h1>
     </div>
+<%include>
+  inc/custom_header.ecpp
+</%include>
     <div id="tags">
+<%include>
+  inc/custom_tags.ecpp
+</%include>
       <dl class="tags">
+        <dt>
+          categories
+        </dt>
         <dd>
   <%cpp>
     try {
