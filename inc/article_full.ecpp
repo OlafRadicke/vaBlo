@@ -29,7 +29,7 @@
 %   if(!article->getHead().empty()) {
 	<h4><$ article->getHead() $></h4>
 %   }
-    <h2><a href="/article/<$ article->getUrl() $>"><$ article->getTitle() $></a></h2>
+    <h2><a href="/<$ article->getUrlBase() $><$$ article->getUrlBase().empty() ? "" : "/" $><$ article->getUrl() $>"><$ article->getTitle() $></a></h2>
 %    if(!article->getAbstract().empty()) {
 	<p class="abstract"> <$ article->getAbstract() $> </p>
 %    }
