@@ -57,6 +57,7 @@ try {
 <%include>
   inc/article_pre.ecpp
 </%include>
+% if(article->getCommentsAllow()) {
   <h4>Reply on comment</h4>
 <%include>
   inc/comment.ecpp
@@ -66,6 +67,7 @@ try {
   inc/comment_form.ecpp
 </%include>
 <%cpp>
+  }
   sp.commit();
 }
 catch(const vagra::Exception& er_comm) {

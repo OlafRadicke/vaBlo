@@ -44,7 +44,8 @@
 <%cpp>
 try {
   tnt::Savepoint sp(reply);
-  if(comment) {
+  vagra::CachedArticle article(comment.getArticle());
+  if(article->getCommentsAllow() && comment) {
     comment.setContext("comments");
     comment.dbCommit();
 </%cpp>
@@ -52,7 +53,7 @@ try {
 <%include> 
   inc/comment.ecpp
 </%include>
-  <a href="/article/<$ vagra::CachedArticle(comment.getArticle())->getUrl() $>">Back to article</a>
+  <a href="/<$ article->getUrlBase() $><$$ article->getUrlBase().empty() ? "" : "/" $><$ article->getUrl() $>">Back to article</a>
 % } else {
     <p class="warn">Invalid comment!</p>
     <p class="warn">You might need to enable session cookies.</p>

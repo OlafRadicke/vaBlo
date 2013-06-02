@@ -36,5 +36,7 @@
 %	    tit != art_tags.end(); tit++) {
 	  <a href="/categories/<$ *tit $>"><$ *tit $></a>
 %	}
+%	if(article->getCommentsView()) {
       | There are <a href="/comments/<$ article->getUrl() $>#comments"><$ article->getCommentAmount() $> Comments</a>
+%	}
     </div>

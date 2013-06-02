@@ -54,6 +54,7 @@
 try {
   tnt::Savepoint sp(reply);
   vagra::CachedArticle article(i_art_id);
+  if(article->getCommentsAllow()) {
 </%cpp>
 <%include>
   inc/article_pre.ecpp
@@ -94,6 +95,7 @@ try {
   inc/comment_form.ecpp
 </%include>
 <%cpp>
+  }
   sp.commit();
 }
 catch(const vagra::Exception& er_comm) {

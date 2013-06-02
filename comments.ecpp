@@ -53,6 +53,7 @@ try {
   tnt::Savepoint sp(reply);
   vagra::CachedArticle article(title);
   i_art_id = article->getId();
+  if(article->getCommentsView()) {
 </%cpp>
 <%include>
   inc/article_pre.ecpp
@@ -85,11 +86,14 @@ try {
   inc/pager.ecpp
 </%include>
 %   }
+% if(article->getCommentsAllow()) {
   <h4 id="comment">Write Comment</h4>
 <%include>
   inc/comment_form.ecpp
 </%include>
 <%cpp>
+  }
+  }
   }
   sp.commit();
 }

@@ -47,7 +47,7 @@ try {
 <%include>
   inc/article_full.ecpp
 </%include>
-% if(article->getCommentAmount()) {  
+% if(article->getCommentsView() && article->getCommentAmount()) {  
 %   std::vector<unsigned int> comm_ids = article->getCommentIds();
   <h4 id="comments">Comments</h4>
 <%cpp>
@@ -61,8 +61,10 @@ try {
 %   }
   <a href="/comments/<$ article->getUrl() $>#comments">All comments</a> | 
 % }
+% if(article->getCommentsAllow()) {
   <a href="/comments/<$ article->getUrl() $>#comment"> Write comment</a>
 <%cpp>
+  }
   sp.commit();
 }
 catch(const vagra::Exception& er_art) {
