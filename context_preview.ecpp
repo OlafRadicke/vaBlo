@@ -42,6 +42,7 @@
   std::string i_readlevel;
   std::string i_addlevel;
   std::string i_writelevel;
+  std::string i_urlbase;
 </%args>
 <%securesession scope="global">
   vagra::Context context;
@@ -60,6 +61,8 @@ try {
       context->setReadLevel(vagra::str2unsigned(i_readlevel), auth);
       context->setAddLevel(vagra::str2unsigned(i_addlevel), auth);
       context->setWriteLevel(vagra::str2unsigned(i_writelevel), auth);
+    } else if(i_type == "update_urlbase") {
+      context->setUrlBase(i_urlbase, auth);
     } else if(i_type == "rem_unprivileged") {
       vagra::User user(i_value, auth);
       context->removeUnprivileged(user, auth);

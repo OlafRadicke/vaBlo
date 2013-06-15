@@ -72,9 +72,9 @@
 </%cpp>
     <div class="context">
       <h4>Context <$ context->getName() $></h4>
-      <form action="/admin/context/preview" method="post">
+      <p><form action="/admin/context/preview" method="post">
         <table class="ctxlist">
-          <caption>Default object privilegs</caption>
+          <caption>Default&nbsp;object&nbsp;privilegs</caption>
           <tr>
             <td>ReadLevel</td>
             <td>
@@ -125,10 +125,16 @@
             </td>
           </tr>
         </table>
-      </form>
-      <form action="/admin/context/preview" method="post">
+      </form></p>
+      <p><form action="/admin/context/preview" method="post">
+        <input type="hidden" name="i_type" value="update_urlbase" />
+        <label for="fl_urlbase">Url base</label>
+	  <input type="text" name="i_urlbase"  id="fl_urlbase" value="<$ context->getUrlBase() $>" />
+        <input type="submit" value="update" />
+      </form></p>
+      <p><form action="/admin/context/preview" method="post">
         <table class="userlist">
-          <caption>Unprivileged users</caption>
+          <caption>Unprivileged&nbsp;users</caption>
 %	  const std::vector<unsigned int>& unprivileged = context->getUnprivileged();
 %         if(unprivileged.empty())
 	    <tr><td>none</td></tr>
@@ -151,7 +157,7 @@
       </form>
       <form action="/admin/context/preview" method="post">
         <table class="userlist">
-          <caption>Privileged users</caption>
+          <caption>Privileged&nbsp;users</caption>
 %         const std::vector<unsigned int>& privileged = context->getPrivileged();
 %	  if(privileged.empty())
 	    <tr><td>none</td></tr>
@@ -174,7 +180,7 @@
       </form>
       <form action="/admin/context/preview" method="post">
         <table class="userlist">
-          <caption>Context admins</caption>
+          <caption>Context&nbsp;admins</caption>
 %	  const std::vector<unsigned int>& admin = context->getAdmin();
 %         if(admin.empty())
 	    <tr><td>none</td></tr>
@@ -194,5 +200,5 @@
          <input type="text" name="i_value" value="" />
          <input type="submit" value="Add" />
         </fieldset>
-      </form>
+      </form></p>
     </div>
