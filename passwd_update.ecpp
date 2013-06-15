@@ -40,7 +40,6 @@
 </%args>
 <%securesession scope="global">
   vagra::User user;
-  vagra::Passwd passwd;
 </%securesession>
 <%include>
   inc/header.ecpp
@@ -59,13 +58,12 @@ try {
     </%cpp>
      <p>Change password for user <$ user->getDispname() $></p>
     <%cpp>
-    passwd = user.getPasswd();
 
     if(!i_npasswd.empty() && !i_vpasswd.empty())
     {
-      passwd.update(i_npasswd); 
+      user.setPasswd(i_npasswd); 
 
-      if(passwd.verify(i_vpasswd)) {
+      if(user.getPasswd().verify(i_vpasswd)) {
 </%cpp>
         <form action="/admin/passwd/commit" method="get">
           <div class="submit"><input type="submit" value="Commit" /></div>

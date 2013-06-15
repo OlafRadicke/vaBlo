@@ -37,7 +37,6 @@
 </%cpp>
 <%securesession scope="global">
   vagra::User user;
-  vagra::Passwd passwd;
 </%securesession>
 <%include>
   inc/header.ecpp
@@ -50,23 +49,15 @@ try {
 
   if(user)
   {
-    if(passwd)
+    if(user.getPasswd())
     {
-
-      if(passwd.getId())
+      if(user.getPasswd().getId())
       {
-        passwd.dbCommit(auth);
-      }
-      else
-      {
-        passwd.setContext("passwd", auth);
-        passwd.setOwner(user, auth);
-        user.setPasswd(passwd);
-        user.dbCommit(auth);
-      } 
+        user.passwdCommit(auth);
       </%cpp>
        <p>Password changed</p>
       <%cpp>
+      }
     }
     else
     {
@@ -75,7 +66,6 @@ try {
       <%cpp>
     } 
     user.clear();
-    passwd.clear();
   }
   else
   {
