@@ -41,7 +41,6 @@
   bool i_commentsallow = true;
   bool i_commentsshow = true;
   std::string i_title;
-  std::string i_name;
   std::string i_head;
   std::string i_abstract;
   std::string i_text;
@@ -65,7 +64,6 @@ try {
     article.setTitle(i_title);
   }
 
-  article.setAuthor(i_name);
   article.setHead(i_head);
   article.setAbstract(i_abstract);
   article.setText(i_text);

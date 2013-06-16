@@ -51,7 +51,6 @@ try {
     bool i_commentsallow = article.getCommentsAllow();
     bool i_commentsshow = article.getCommentsView();
     std::string i_title(article.getTitle());
-    std::string i_name(article.getAuthor());
     std::string i_head(article.getHead());
     std::string i_abstract(article.getAbstract());
     std::string i_text(article.getText());

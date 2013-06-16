@@ -42,8 +42,6 @@
       <label for="title">Title<span class="desc">(will be part of the URL, _ are handled as spaces)</span></label>
 	<input type="text" name="i_title" id="title" value="<$ i_title $>" />
 %   }
-      <label for="fl_name">Author Name</label>
-	<input type="text" name="i_name" id="fl_name" value="<$ i_name $>" />
       <label for="fl_headline">Headline</label>
 	<input type="text" name="i_head" id="fl_headline" value="<$ i_head $>" />
       <label for="fl_abstract">Abstract</label>

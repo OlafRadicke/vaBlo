@@ -47,7 +47,6 @@ try {
   bool i_commentsallow = true;
   bool i_commentsshow = true;
   std::string i_title;
-  std::string i_name;
   std::string i_head;
   std::string i_abstract;
   std::string i_text;
