@@ -48,6 +48,8 @@ try {
     unsigned int i_art_id = article.getId();
     unsigned int i_readlevel = article.getReadLevel();
     unsigned int i_context = article.getContext()->getId();
+    bool i_commentsallow = article.getCommentsAllow();
+    bool i_commentsshow = article.getCommentsView();
     std::string i_title(article.getTitle());
     std::string i_name(article.getAuthor());
     std::string i_head(article.getHead());

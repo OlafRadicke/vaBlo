@@ -59,6 +59,16 @@
           <option value="14" <$$ i_readlevel == 14 ? "selected=\"selected\" " : "" $>>Context member</option>
           <option value="30" <$$ i_readlevel == 30 ? "selected=\"selected\" " : "" $>>Privileged and owner</option>
         </select>
+      <label for="fl_commentsallow">Allow comments</label>
+	<select name="i_commentsallow" id="fl_commentsallow">
+          <option value="true" <$$ i_commentsallow == true ? "selected=\"selected\" " : "" $>>Enabled</option>
+          <option value="false" <$$ i_commentsallow == false ? "selected=\"selected\" " : "" $>>Disabled</option>
+        </select>
+      <label for="fl_commentsshow">Show comments</label>
+	<select name="i_commentsshow" id="fl_commentsshow">
+          <option value="true" <$$ i_commentsshow == true ? "selected=\"selected\" " : "" $>>Enabled</option>
+          <option value="false" <$$ i_commentsshow == false ? "selected=\"selected\" " : "" $>>Disabled</option>
+        </select>
       <label for="fl_context">Context</label>
 	<select name="i_context" id="fl_context">
 %       for(std::vector<unsigned int>::const_iterator it = results.begin(); it != results.end(); it++) {
