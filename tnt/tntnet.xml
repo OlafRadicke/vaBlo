@@ -75,56 +75,56 @@
     <mapurl>
       <target>admin@vablo</target>
       <url>^/admin/$</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>admin@vablo</target>
       <url>^/admin/([0-9]+$)</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>article_new@vablo</target>
       <url>^/admin/article/new</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>article_update@vablo</target>
       <url>^/admin/article/update/(.*)</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>article_preview@vablo</target>
       <url>^/admin/article/preview</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>article_commit@vablo</target>
       <url>^/admin/article/commit</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>comment_update@vablo</target>
       <url>^/admin/comment/update</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>comment_update_commit@vablo</target>
       <url>^/admin/comment/commit</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>comment_update@vablo</target>
       <url>^/admin/comment/([0-9]+$)</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>admin_comments@vablo</target>
       <url>^/admin/comments/([^/]+)/*(.*)</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
       <args>
         <article>$1</article>
         <pagenum>$2</pagenum>
@@ -133,90 +133,90 @@
     <mapurl>
       <target>user_new@vablo</target>
       <url>^/admin/user/new</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>user_update@vablo</target>
       <url>^/admin/user/update/(.*)</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>user_preview@vablo</target>
       <url>^/admin/user/preview</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>user_commit@vablo</target>
       <url>^/admin/user/commit</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>user_list@vablo</target>
       <url>^/admin/user/$</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>user_list@vablo</target>
       <url>^/admin/user/([0-9]+$)</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>context_new@vablo</target>
       <url>^/admin/context/new</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>context_update@vablo</target>
       <url>^/admin/context/update/(.*)</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>context_preview@vablo</target>
       <url>^/admin/context/preview</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>context_commit@vablo</target>
       <url>^/admin/context/commit</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>context_list@vablo</target>
       <url>^/admin/context/$</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>context_list@vablo</target>
       <url>^/admin/context/([0-9]+$)</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>passwd_update@vablo</target>
       <url>^/admin/passwd/update/(.*)</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>passwd_commit@vablo</target>
       <url>^/admin/passwd/commit</url>
       <pathinfo>$1</pathinfo>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>login@vablo</target>
       <url>^/admin/login</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>logout@vablo</target>
       <url>^/admin/logout</url>
-      <vhost>.*:8443</vhost>
+      <ssl>1</ssl>
     </mapurl>
     <mapurl>
       <target>error@vablo</target>
