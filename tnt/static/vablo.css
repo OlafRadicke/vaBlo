@@ -69,6 +69,10 @@ a:visited {
 	border-color: #2d2626;
 }
 
+dl.tags dt {
+	display: none;
+}
+
 dl.tags a {
 	position: relative;
 	display: block;
