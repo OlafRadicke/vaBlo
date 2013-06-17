@@ -1,8 +1,10 @@
  INSTALL FROM GIT
-------------------
+==================
 
+ Git version
+-------------
 git clone git://git.vtoc.de/vagra
-ln -s vagra/Makefile.inv
+ln -s vagra/Makefile.inc
 
 edit Makefile.inc
 
@@ -13,3 +15,25 @@ make sure the following modules are enabled:
 MODULES = article comment user passwd
 
 run "make" or "gmake" if your make version does not support GNU extension
+
+
+ Postgres
+----------
+$ psql
+CREATE DATABASE vablo; 
+CREATE USER vablo WITH ENCRYPTED PASSWORD 'changeme';
+
+$ psql vablo < vablo.sql
+
+
+ tntnet
+--------
+cp tnt/vagra.conf.default tnt/vagra.conf
+edit tnt/vagra.conf
+
+the tnt subdirectory contains all neded at runtime, just copy it to server and run:
+$ tntnet -c tntnet.xml
+
+Login https://maya:8443/admin/
+	User:	admin
+	Passwd:	vablo

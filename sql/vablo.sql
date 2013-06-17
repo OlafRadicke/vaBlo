@@ -2,34 +2,27 @@
 -- PostgreSQL database dump
 --
 
+SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
-SET standard_conforming_strings = off;
+SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET escape_string_warning = off;
 
 --
--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: postgres
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
-CREATE PROCEDURAL LANGUAGE plpgsql;
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
-ALTER PROCEDURAL LANGUAGE plpgsql OWNER TO postgres;
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
 
 SET search_path = public, pg_catalog;
-
---
--- Name: update_state_mtime(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION update_state_mtime() RETURNS trigger
-    AS $$
-BEGIN UPDATE states SET mtime = now(); RETURN NEW; END; $$
-    LANGUAGE plpgsql;
-
-
-ALTER FUNCTION public.update_state_mtime() OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -40,14 +33,20 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE articles (
-    title character varying(40) NOT NULL,
+    title character varying(40),
     ctime timestamp without time zone DEFAULT now(),
     mtime timestamp without time zone DEFAULT now(),
     content text,
-    headline character varying(80) NOT NULL,
-    art_id integer NOT NULL,
+    headline character varying(80),
+    id integer NOT NULL,
     abstract text,
-    author character varying(40)
+    oid integer NOT NULL,
+    cid integer NOT NULL,
+    read_level integer DEFAULT 126,
+    write_level integer DEFAULT 126,
+    add_level integer DEFAULT 126,
+    comments_allow boolean DEFAULT true,
+    comments_view boolean DEFAULT true
 );
 
 
@@ -58,7 +57,7 @@ ALTER TABLE public.articles OWNER TO postgres;
 --
 
 CREATE TABLE comments (
-    comm_id integer NOT NULL,
+    id integer NOT NULL,
     name character varying(40),
     mail character varying(40),
     home character varying(40),
@@ -66,7 +65,12 @@ CREATE TABLE comments (
     comm_ref integer,
     art_id integer,
     ctime timestamp without time zone DEFAULT now(),
-    mtime timestamp without time zone DEFAULT now()
+    mtime timestamp without time zone DEFAULT now(),
+    oid integer NOT NULL,
+    cid integer NOT NULL,
+    read_level integer DEFAULT 126,
+    write_level integer DEFAULT 126,
+    add_level integer DEFAULT 126
 );
 
 
@@ -77,9 +81,10 @@ ALTER TABLE public.comments OWNER TO postgres;
 --
 
 CREATE SEQUENCE comments_comm_id_seq
+    START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -89,17 +94,84 @@ ALTER TABLE public.comments_comm_id_seq OWNER TO postgres;
 -- Name: comments_comm_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE comments_comm_id_seq OWNED BY comments.comm_id;
+ALTER SEQUENCE comments_comm_id_seq OWNED BY comments.id;
 
+
+--
+-- Name: context_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE context_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.context_id_seq OWNER TO postgres;
+
+--
+-- Name: context; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE context (
+    id integer DEFAULT nextval('context_id_seq'::regclass) NOT NULL,
+    name character varying(40) NOT NULL,
+    read_level integer DEFAULT 126 NOT NULL,
+    add_level integer DEFAULT 126 NOT NULL,
+    write_level integer DEFAULT 126 NOT NULL,
+    url_base character varying(40)
+);
+
+
+ALTER TABLE public.context OWNER TO postgres;
+
+--
+-- Name: context_admins; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE context_admins (
+    id integer NOT NULL,
+    member integer NOT NULL
+);
+
+
+ALTER TABLE public.context_admins OWNER TO postgres;
+
+--
+-- Name: context_privileged; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE context_privileged (
+    id integer NOT NULL,
+    member integer NOT NULL
+);
+
+
+ALTER TABLE public.context_privileged OWNER TO postgres;
+
+--
+-- Name: context_unprivileged; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE context_unprivileged (
+    id integer NOT NULL,
+    member integer NOT NULL
+);
+
+
+ALTER TABLE public.context_unprivileged OWNER TO postgres;
 
 --
 -- Name: entries_ent_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE entries_ent_id_seq
+    START WITH 1
     INCREMENT BY 1
-    NO MAXVALUE
     NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
@@ -109,20 +181,8 @@ ALTER TABLE public.entries_ent_id_seq OWNER TO postgres;
 -- Name: entries_ent_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE entries_ent_id_seq OWNED BY articles.art_id;
+ALTER SEQUENCE entries_ent_id_seq OWNED BY articles.id;
 
-
---
--- Name: states; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE states (
-    id integer NOT NULL,
-    mtime timestamp without time zone
-);
-
-
-ALTER TABLE public.states OWNER TO postgres;
 
 --
 -- Name: tags; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
@@ -137,17 +197,201 @@ CREATE TABLE tags (
 ALTER TABLE public.tags OWNER TO postgres;
 
 --
--- Name: art_id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: vuser_u_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-ALTER TABLE articles ALTER COLUMN art_id SET DEFAULT nextval('entries_ent_id_seq'::regclass);
+CREATE SEQUENCE vuser_u_id_seq
+    START WITH 1001
+    INCREMENT BY 1
+    MINVALUE 1001
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.vuser_u_id_seq OWNER TO postgres;
+
+--
+-- Name: vpasswd_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE vpasswd_id_seq
+    START WITH 1001
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.vpasswd_id_seq OWNER TO postgres;
+
+--
+-- Name: vpasswd; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE vpasswd (
+    id integer DEFAULT nextval('vpasswd_id_seq'::regclass) NOT NULL,
+    salt character varying(32),
+    hash character varying(32),
+    mtime timestamp without time zone DEFAULT now(),
+    ctime timestamp without time zone DEFAULT now(),
+    oid integer NOT NULL,
+    cid integer NOT NULL,
+    read_level integer DEFAULT 126,
+    write_level integer DEFAULT 126,
+    add_level integer DEFAULT 126
+);
+
+
+ALTER TABLE public.vpasswd OWNER TO postgres;
+
+--
+-- Name: vuser; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE vuser (
+    id integer DEFAULT nextval('vuser_u_id_seq'::regclass) NOT NULL,
+    mtime timestamp without time zone DEFAULT now(),
+    ctime timestamp without time zone DEFAULT now(),
+    logname character varying(16),
+    dispname character varying,
+    oid integer NOT NULL,
+    cid integer NOT NULL,
+    read_level integer DEFAULT 126,
+    write_level integer DEFAULT 126,
+    add_level integer DEFAULT 126,
+    pw_id integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.vuser OWNER TO postgres;
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY articles ALTER COLUMN id SET DEFAULT nextval('entries_ent_id_seq'::regclass);
 
 
 --
--- Name: comm_id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE comments ALTER COLUMN comm_id SET DEFAULT nextval('comments_comm_id_seq'::regclass);
+ALTER TABLE ONLY comments ALTER COLUMN id SET DEFAULT nextval('comments_comm_id_seq'::regclass);
+
+
+--
+-- Data for Name: articles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY articles (title, ctime, mtime, content, headline, id, abstract, oid, cid, read_level, write_level, add_level, comments_allow, comments_view) FROM stdin;
+\.
+
+
+--
+-- Data for Name: comments; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY comments (id, name, mail, home, comment, comm_ref, art_id, ctime, mtime, oid, cid, read_level, write_level, add_level) FROM stdin;
+\.
+
+
+--
+-- Name: comments_comm_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('comments_comm_id_seq', 0, true);
+
+
+--
+-- Data for Name: context; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY context (id, name, read_level, add_level, write_level, url_base) FROM stdin;
+0	default	126	126	126	default
+2	blog	2	14	30	article
+3	passwd	2	62	36	passwd
+1	public	2	62	30	
+5	comments	2	2	62	comments
+4	users	2	62	30	admin
+\.
+
+
+--
+-- Data for Name: context_admins; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY context_admins (id, member) FROM stdin;
+\.
+
+
+--
+-- Name: context_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('context_id_seq', 5, true);
+
+
+--
+-- Data for Name: context_privileged; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY context_privileged (id, member) FROM stdin;
+\.
+
+
+--
+-- Data for Name: context_unprivileged; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY context_unprivileged (id, member) FROM stdin;
+\.
+
+
+--
+-- Name: entries_ent_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('entries_ent_id_seq', 0, true);
+
+
+--
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY tags (tag, art_id) FROM stdin;
+\.
+
+
+--
+-- Name: vuser_u_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('vuser_u_id_seq', 1000, true);
+
+
+--
+-- Data for Name: vpasswd; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY vpasswd (id, salt, hash, mtime, ctime, oid, cid, read_level, write_level, add_level) FROM stdin;
+1000	1f4ebbc5032e27da87cb7d567c489295	05467a865f7cd437c9093a026f75f09e	2013-06-15 14:51:45.147494	2013-06-01 13:36:21.817158	1000	3	2	126	126
+\.
+
+
+--
+-- Name: vpasswd_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('vpasswd_id_seq', 1000, true);
+
+
+--
+-- Data for Name: vuser; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY vuser (id, mtime, ctime, logname, dispname, oid, cid, read_level, write_level, add_level, pw_id) FROM stdin;
+1000	2013-06-01 13:31:42.531282	2013-06-01 13:31:42.531282	admin	Admin	1000	4	2	126	126	1000
+\.
 
 
 --
@@ -155,7 +399,7 @@ ALTER TABLE comments ALTER COLUMN comm_id SET DEFAULT nextval('comments_comm_id_
 --
 
 ALTER TABLE ONLY articles
-    ADD CONSTRAINT articles_pkey PRIMARY KEY (art_id);
+    ADD CONSTRAINT articles_pkey PRIMARY KEY (id);
 
 
 --
@@ -163,15 +407,23 @@ ALTER TABLE ONLY articles
 --
 
 ALTER TABLE ONLY comments
-    ADD CONSTRAINT comments_pkey PRIMARY KEY (comm_id);
+    ADD CONSTRAINT comments_pkey PRIMARY KEY (id);
 
 
 --
--- Name: states_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: context_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
-ALTER TABLE ONLY states
-    ADD CONSTRAINT states_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY context
+    ADD CONSTRAINT context_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: dispname_uniq; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY vuser
+    ADD CONSTRAINT dispname_uniq UNIQUE (dispname);
 
 
 --
@@ -183,10 +435,83 @@ ALTER TABLE ONLY articles
 
 
 --
+-- Name: vuser_logname_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY vuser
+    ADD CONSTRAINT vuser_logname_key UNIQUE (logname);
+
+
+--
+-- Name: vuser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY vuser
+    ADD CONSTRAINT vuser_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: vpasswd_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY vpasswd
+    ADD CONSTRAINT vpasswd_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: comm_art_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE INDEX comm_art_id_idx ON comments USING btree (art_id);
+
+
+--
+-- Name: context_admin_ids; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX context_admin_ids ON context_admins USING btree (id);
+
+
+--
+-- Name: context_admin_member; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX context_admin_member ON context_admins USING btree (member);
+
+
+--
+-- Name: context_names; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX context_names ON context USING btree (name);
+
+
+--
+-- Name: context_privileged_ids; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX context_privileged_ids ON context_privileged USING btree (id);
+
+
+--
+-- Name: context_privileged_member; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX context_privileged_member ON context_privileged USING btree (member);
+
+
+--
+-- Name: context_unprivileged_ids; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX context_unprivileged_ids ON context_unprivileged USING btree (id);
+
+
+--
+-- Name: context_unprivileged_member; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX context_unprivileged_member ON context_unprivileged USING btree (member);
 
 
 --
@@ -204,13 +529,10 @@ CREATE INDEX tags_tag_idx ON tags USING hash (tag);
 
 
 --
--- Name: update_state_mtime_on_update; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: vuser_logname_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
 --
 
-CREATE TRIGGER update_state_mtime_on_update
-    AFTER INSERT OR DELETE OR UPDATE ON articles
-    FOR EACH STATEMENT
-    EXECUTE PROCEDURE update_state_mtime();
+CREATE INDEX vuser_logname_idx ON vuser USING btree (logname);
 
 
 --
@@ -218,7 +540,31 @@ CREATE TRIGGER update_state_mtime_on_update
 --
 
 ALTER TABLE ONLY comments
-    ADD CONSTRAINT comments_art_id_fkey FOREIGN KEY (art_id) REFERENCES articles(art_id);
+    ADD CONSTRAINT comments_art_id_fkey FOREIGN KEY (art_id) REFERENCES articles(id);
+
+
+--
+-- Name: context_admins_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY context_admins
+    ADD CONSTRAINT context_admins_id_fkey FOREIGN KEY (id) REFERENCES context(id);
+
+
+--
+-- Name: context_privileged_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY context_privileged
+    ADD CONSTRAINT context_privileged_id_fkey FOREIGN KEY (id) REFERENCES context(id);
+
+
+--
+-- Name: context_unprivileged_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY context_unprivileged
+    ADD CONSTRAINT context_unprivileged_id_fkey FOREIGN KEY (id) REFERENCES context(id);
 
 
 --
@@ -226,7 +572,7 @@ ALTER TABLE ONLY comments
 --
 
 ALTER TABLE ONLY tags
-    ADD CONSTRAINT tags_art_id_fkey FOREIGN KEY (art_id) REFERENCES articles(art_id);
+    ADD CONSTRAINT tags_art_id_fkey FOREIGN KEY (art_id) REFERENCES articles(id);
 
 
 --
@@ -270,6 +616,56 @@ GRANT UPDATE ON SEQUENCE comments_comm_id_seq TO vablo;
 
 
 --
+-- Name: context_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE context_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE context_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE context_id_seq TO postgres;
+GRANT UPDATE ON SEQUENCE context_id_seq TO vablo;
+
+
+--
+-- Name: context; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE context FROM PUBLIC;
+REVOKE ALL ON TABLE context FROM postgres;
+GRANT ALL ON TABLE context TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE context TO vablo;
+
+
+--
+-- Name: context_admins; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE context_admins FROM PUBLIC;
+REVOKE ALL ON TABLE context_admins FROM postgres;
+GRANT ALL ON TABLE context_admins TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE context_admins TO vablo;
+
+
+--
+-- Name: context_privileged; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE context_privileged FROM PUBLIC;
+REVOKE ALL ON TABLE context_privileged FROM postgres;
+GRANT ALL ON TABLE context_privileged TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE context_privileged TO vablo;
+
+
+--
+-- Name: context_unprivileged; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE context_unprivileged FROM PUBLIC;
+REVOKE ALL ON TABLE context_unprivileged FROM postgres;
+GRANT ALL ON TABLE context_unprivileged TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE context_unprivileged TO vablo;
+
+
+--
 -- Name: entries_ent_id_seq; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -280,16 +676,6 @@ GRANT UPDATE ON SEQUENCE entries_ent_id_seq TO vablo;
 
 
 --
--- Name: states; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE states FROM PUBLIC;
-REVOKE ALL ON TABLE states FROM postgres;
-GRANT ALL ON TABLE states TO postgres;
-GRANT SELECT,UPDATE ON TABLE states TO vablo;
-
-
---
 -- Name: tags; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -297,6 +683,46 @@ REVOKE ALL ON TABLE tags FROM PUBLIC;
 REVOKE ALL ON TABLE tags FROM postgres;
 GRANT ALL ON TABLE tags TO postgres;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE tags TO vablo;
+
+
+--
+-- Name: vuser_u_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE vuser_u_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE vuser_u_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE vuser_u_id_seq TO postgres;
+GRANT UPDATE ON SEQUENCE vuser_u_id_seq TO vablo;
+
+
+--
+-- Name: vpasswd_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE vpasswd_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE vpasswd_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE vpasswd_id_seq TO postgres;
+GRANT UPDATE ON SEQUENCE vpasswd_id_seq TO vablo;
+
+
+--
+-- Name: vpasswd; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE vpasswd FROM PUBLIC;
+REVOKE ALL ON TABLE vpasswd FROM postgres;
+GRANT ALL ON TABLE vpasswd TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE vpasswd TO vablo;
+
+
+--
+-- Name: vuser; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE vuser FROM PUBLIC;
+REVOKE ALL ON TABLE vuser FROM postgres;
+GRANT ALL ON TABLE vuser TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE vuser TO vablo;
 
 
 --
