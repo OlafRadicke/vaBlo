@@ -34,6 +34,6 @@ edit tnt/vagra.conf
 the tnt subdirectory contains all neded at runtime, just copy it to server and run:
 $ tntnet -c tntnet.xml
 
-Login https://maya:8443/admin/
+Login https://localhost:8443/admin/
 	User:	admin
 	Passwd:	vablo
