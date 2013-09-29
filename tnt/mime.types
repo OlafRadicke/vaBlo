@@ -20,3 +20,4 @@ application/vnd.ms-powerpoint	.ppt .pps .pot
 application/zip	.zip
 application/x-gtar	.gtar .tgz .taz
 application/x-java-archive	.jar
+application/x-bzip2     .bz2
