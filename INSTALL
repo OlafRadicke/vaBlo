@@ -35,7 +35,9 @@ $ psql vablo < vablo.sql
 cp tnt/vagra.conf.default tnt/vagra.conf
 edit tnt/vagra.conf
 
-the tnt subdirectory contains all neded at runtime, just copy it to server and run:
+the tnt subdirectory contains all (but tntnet&tntdb) needed at runtime,
+just copy it to server and run:
+
 $ tntnet -c tntnet.xml
 
 Login https://localhost:8443/admin/
