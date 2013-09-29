@@ -1,18 +1,22 @@
- INSTALL FROM GIT
-==================
+ INSTALL
+=========
 
- Git version
--------------
-git clone git://git.vtoc.de/vagra
-ln -s vagra/Makefile.inc
+ from tarball
+--------------
 
 edit Makefile.inc
 
-set compiler/linker flags suitable for your system
+run "make" or "gmake" if your make version does not support GNU extension
 
-make sure the following modules are enabled:
 
-MODULES = article comment user passwd
+ from git
+----------
+
+git clone git://git.vtoc.de/vagra
+cp Makefile.inc.default vagra/Makefile.inc
+ln -s vagra/Makefile.inc
+
+edit Makefile.inc
 
 run "make" or "gmake" if your make version does not support GNU extension
 
